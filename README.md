@@ -34,10 +34,10 @@ pip install -r requirements.txt
 
 | Module                    | Description                                                                 |
 |---------------------------|-----------------------------------------------------------------------------|
-| `src/preprocessing/`      | Tools for N4 bias correction, FSL BET skull stripping, linear registration  |
-| `src/characterization/`   | Scripts for computing voxel spacing stats, orientation formats, intensity histograms |
-| `src/covariate_shift/`    | Feature extraction via pre-trained 3D DenseNet, shift quantification        |
-| `src/utils/`              | Helper functions for loading NIfTI, computing stats, saving plots           |
+| `preprocessing/`      | Tools for N4 bias correction, FSL BET skull stripping, linear registration  |
+| `characterization/`   | Scripts for computing voxel spacing stats, orientation formats, intensity histograms |
+| `covariate_shift/`    | Feature extraction via pre-trained 3D DenseNet, shift quantification        |
+| `utils/`              | Helper functions for loading NIfTI, computing stats, saving plots           |
 
 ## Outputs
 
