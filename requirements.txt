@@ -2,3 +2,10 @@ simpleitk
 nibabel
 ants
 nipype
+pandas
+numpy
+tensorflow
+scikit-learn
+seaborn
+matplotlib
+scipy

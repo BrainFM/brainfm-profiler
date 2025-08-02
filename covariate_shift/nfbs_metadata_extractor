@@ -1,0 +1,60 @@
+import os
+import pandas as pd
+import re
+import warnings
+
+# В начале вашего скрипта
+warnings.filterwarnings("ignore")
+
+def collect_nfbs_metadata(dataset_directory_path: str, output_csv_path: str):
+    print(f"Collecting NFBS metadata from: {dataset_directory_path}")
+    metadata_records = []
+    patient_folder_pattern = re.compile(r'A\d{7,}')
+    t1w_brain_image_pattern = re.compile(r'T1w_brain\.nii\.gz$') # Это уже ищет 'T1w'
+
+    os.makedirs(os.path.dirname(output_csv_path), exist_ok=True)
+
+    try:
+        if not os.path.exists(dataset_directory_path):
+            print(f"Error: Dataset directory path does not exist: {dataset_directory_path}")
+            return pd.DataFrame()
+        if not os.listdir(dataset_directory_path):
+            print(f"Warning: Dataset directory is empty or cannot be listed: {dataset_directory_path}")
+            return pd.DataFrame()
+
+        for entry_name in os.listdir(dataset_directory_path):
+            full_entry_path = os.path.join(dataset_directory_path, entry_name)
+            if os.path.isdir(full_entry_path) and patient_folder_pattern.match(entry_name):
+                print(f"Processing potential patient folder: {entry_name}")
+                patient_id = entry_name
+                disease_status = 'healthy'
+                found_image_path = None
+
+                for root, _, files in os.walk(full_entry_path):
+                    for file_name in files:
+                        if t1w_brain_image_pattern.search(file_name):
+                            found_image_path = os.path.join(root, file_name)
+                            print(f"  Found image for {patient_id}: {found_image_path}")
+                            break
+                    if found_image_path:
+                        break
+
+                if found_image_path:
+                    relative_image_path = os.path.relpath(found_image_path, dataset_directory_path)
+                    metadata_records.append({
+                        'patient_id': patient_id,
+                        'disease': disease_status,
+                        'modality': 'T1w', # ИЗМЕНЕНО: теперь сохраняем как 'T1w'
+                        'image_path': relative_image_path
+                    })
+                else:
+                    print(f"  Warning: No matching T1w_brain.nii.gz image found for patient ID: {patient_id} in {full_entry_path}")
+
+        df = pd.DataFrame(metadata_records)
+        df.to_csv(output_csv_path, index=False)
+        print(f"Collected {len(df)} metadata entries and saved to: {output_csv_path}")
+        return df
+
+    except Exception as e:
+        print(f"An error occurred during metadata collection: {e}")
+        return pd.DataFrame()
