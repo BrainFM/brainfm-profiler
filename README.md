@@ -1,7 +1,9 @@
-# A Multi-Level Characterization of Public Brain Imaging Cohorts for Foundation Model Development
+# A Structured Review and Quantitative Profiling of Public Brain MRI Datasets for Foundation Model Development
 
 This repository accompanies the paper:
-**“A Multi-Level Characterization of Public Brain Imaging Cohorts for Foundation Model Development”**.
+**“A Structured Review and Quantitative Profiling of Public Brain MRI Datasets for Foundation Model Development”**.
+
+[Link for full paper](https://doi.org/10.3390/jimaging11120454)
 
 It contains all source code used for:
 
