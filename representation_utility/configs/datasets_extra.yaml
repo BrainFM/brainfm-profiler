@@ -1,0 +1,35 @@
+# Extra datasets that have NO metadata CSV in characterization/metadata/.
+# scripts/step1b_add_extra.py walks these directories, reads NIfTI headers
+# directly, infers patient id + modality from the file path, and appends rows
+# to outputs/file_index.parquet with the same schema as Step 1.
+#
+# All four are already extracted on the drive - no unzipping needed.
+
+cap_per_dataset: 300
+seed: 42
+
+datasets:
+  # MS - drop-in to replace the missing MSSEG-2
+  - name: 3D-MR-MS
+    domain: multiple_sclerosis
+    root: /Volumes/BACH2TB/Datasets/3D-MR-MS/all
+    parser: mr_ms            # patientNN_<MOD>.nii.gz ; MOD in FLAIR/T1W/T1WKS/T2W
+
+  # healthy controls
+  - name: BGSP
+    domain: healthy
+    root: /Volumes/BACH2TB/Datasets/BGSP/orig_bids
+    parser: bids_t1          # sub-XXXX/ses-*/anat/sub-XXXX_ses-*_T1w.nii.gz (skip func/)
+
+  # glioblastoma / astrocytoma (BIDS)
+  - name: NSK-GBM
+    domain: tumor
+    root: /Volumes/BACH2TB/Datasets/NSK-GBM
+    parser: nsk_gbm          # sub-XXX/anat/sub-XXX_<flair|T1ce|T1w|T2w>.nii.gz
+
+  # glioblastoma - use the UNSTRIPPED structural images (the stripped set is
+  # SRI-registered + skull-stripped and would collapse onto the BraTS cluster)
+  - name: UPENN-GBM
+    domain: tumor
+    root: /Volumes/BACH2TB/Datasets/PKG - UPENN-GBM-NIfTI/UPENN-GBM/NIfTI-files/images_structural_unstripped
+    parser: upenn            # UPENN-GBM-NNNNN_11/UPENN-GBM-NNNNN_11_<FLAIR|T1|T1GD|T2>_unstripped.nii.gz

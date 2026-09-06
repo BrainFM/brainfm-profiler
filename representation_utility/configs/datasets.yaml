@@ -1,0 +1,30 @@
+# Datasets for the representation-utility experiment.
+# Each entry: the metadata CSV in characterization/metadata/ plus any path
+# rewrite needed to point at the local drive (/Volumes/BACH2TB/Datasets).
+#
+# `path_rewrite` is applied as a literal string replace on the CSV `image_path`.
+# Leave it empty when the CSV paths already resolve locally.
+
+cap_per_dataset: 300          # max volumes per dataset, sampled at patient level
+seed: 42
+
+datasets:
+  - {name: BraTS25-MET,  csv: metadata_brats25met.csv,   domain: tumor,            path_rewrite: null}
+  - {name: BraTS25-SSA,  csv: metadata_brats25ssa.csv,   domain: tumor,            path_rewrite: null}
+  - {name: BraTS25-MEN,  csv: metadata_brats25men.csv,   domain: tumor,            path_rewrite: null}
+  - {name: ISLES22,      csv: metadata_isles22.csv,      domain: stroke,           path_rewrite: null}
+  - {name: EPISURG,      csv: metadata_episurg.csv,      domain: epilepsy,         path_rewrite: ["/media/storage2/share/benedichuk/unzipped_data/EPISURG", "/Volumes/BACH2TB/Datasets/EPISURG"]}
+  - {name: IXI,          csv: metadata_ixi.csv,          domain: healthy,          path_rewrite: null}
+  - {name: NFBS,         csv: metadata_nfbs.csv,         domain: healthy,          path_rewrite: null}
+  - {name: OASIS-1,      csv: metadata_oasis1.csv,       domain: neurodegenerative, path_rewrite: null}
+  - {name: OASIS-2,      csv: metadata_oasis2.csv,       domain: neurodegenerative, path_rewrite: null}
+  - {name: MSLesSeg,     csv: metadata_mslesseg.csv,     domain: multiple_sclerosis, path_rewrite: null}
+  - {name: MS-60,        csv: metadata_msbaghdad.csv,    domain: multiple_sclerosis, path_rewrite: ["/Volumes/BACH2TB/Datasets/MS_Iraq", "/Volumes/BACH2TB/Datasets/MS60"]}
+  - {name: BrainMetShare, csv: metadata_brainmetshare.csv, domain: tumor,          path_rewrite: null}
+  - {name: UMF-PD,       csv: metadata_umfpd.csv,        domain: parkinsons,       path_rewrite: null}
+
+# SKIPPED — not present on the drive:
+#   MSSEG-2 (metadata_msseg2.csv): the MICCAI-2021 longitudinal MS challenge
+#   files (".../training/0NN/flair_timeNN_on_middle_space.nii.gz") are not on
+#   /Volumes/BACH2TB/Datasets. "shift-ms" on the drive is a different dataset.
+#   -> experiment runs with 13 datasets.

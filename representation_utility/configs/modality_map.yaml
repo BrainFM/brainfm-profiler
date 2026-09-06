@@ -1,0 +1,32 @@
+# Raw modality label (as found in the metadata CSVs)  ->  normalised label.
+# Normalised label set kept for analysis: T1, T1c, T2, FLAIR, PD
+# "DROP" means the volume is excluded from the experiment (non-structural).
+#
+# Notes:
+#  - BraTS naming: t1n = native T1, t1c = post-contrast T1, t2w = T2, t2f = T2-FLAIR
+#  - BrainMetShare: t1pre = native T1, t1gd = post-contrast T1, bravo = 3D T1-w
+#    volumetric (GE BRAVO / FSPGR-like) -> mapped to T1
+#  - IXI 'pd' (proton density) is kept as PD but occurs ONLY in IXI, so downstream
+#    modality probing may exclude PD to avoid a dataset-identity shortcut.
+#  - adc / dwi / mra are diffusion / angiography -> DROP (structural MRI only)
+
+t1:     T1
+t1w:    T1
+t1n:    T1
+t1pre:  T1
+bravo:  T1
+t1c:    T1c
+t1gd:   T1c
+t1ce:   T1c
+t1wks:  T1c     # 3D-MR-MS: T1W + kontrastno sredstvo (contrast agent)
+t2:     T2
+t2w:    T2
+flair:  FLAIR
+t2f:    FLAIR
+pd:     PD
+pdw:    PD
+
+adc:    DROP
+dwi:    DROP
+mra:    DROP
+bold:   DROP
