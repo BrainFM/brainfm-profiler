@@ -2,7 +2,15 @@
 from __future__ import annotations
 from pathlib import Path
 
+import matplotlib
 import pandas as pd
+
+# Times-like serif for all figures in this project
+matplotlib.rcParams.update({
+    "font.family": "serif",
+    "font.serif": ["Times New Roman", "Times", "DejaVu Serif"],
+    "mathtext.fontset": "stix",
+})
 
 RESULTS = Path(__file__).resolve().parents[1] / "results"
 TABLES = RESULTS / "tables"
