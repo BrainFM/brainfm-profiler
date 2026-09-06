@@ -48,5 +48,25 @@ pip install -r requirements.txt
 
 ## Citation
 
-TBD
+If you use this code or its findings in your research, please cite:
+
+> Luu, M.S.K.; Benedichuk, M.V.; Roppert, E.I.; Kenzhin, R.M.; Tuchinov, B.N.
+> A Structured Review and Quantitative Profiling of Public Brain MRI Datasets for Foundation Model Development.
+> *Journal of Imaging* **2025**, *11*, 454. https://doi.org/10.3390/jimaging11120454
+
+BibTeX:
+
+```bibtex
+@article{luu2025brainmri,
+  title   = {A Structured Review and Quantitative Profiling of Public Brain MRI Datasets for Foundation Model Development},
+  author  = {Luu, Minh Sao Khue and Benedichuk, Margaret V. and Roppert, Ekaterina I. and Kenzhin, Roman M. and Tuchinov, Bair N.},
+  journal = {Journal of Imaging},
+  volume  = {11},
+  number  = {12},
+  pages   = {454},
+  year    = {2025},
+  publisher = {MDPI},
+  doi     = {10.3390/jimaging11120454}
+}
+```
 
