@@ -1,0 +1,19 @@
+test,subset,value,p
+DRUS vs contribution,all (n=17),-0.1,0.701
+DRUS vs transfer_score,all (n=17),-0.107,0.684
+component: emb_spread,vs contribution,-0.353,0.165
+component: n_modalities,vs contribution,0.234,0.365
+component: log_n_subjects,vs contribution,-0.197,0.449
+component: domain_rarity,vs contribution,-0.274,0.287
+component: aniso_frac,vs contribution,-0.359,0.156
+component: orient_entropy,vs contribution,0.117,0.654
+component: redundancy,vs contribution,0.237,0.36
+ablate emb_spread,vs contribution,0.154,
+ablate n_modalities,vs contribution,-0.14,
+ablate log_n_subjects,vs contribution,-0.002,
+ablate domain_rarity,vs contribution,0.069,
+ablate aniso_frac,vs contribution,-0.208,
+ablate orient_entropy,vs contribution,-0.025,
+ablate redundancy,vs contribution,0.132,
+weight sensitivity (300x),vs contribution,-0.121,0.071
+LODO ranking stability,all,0.998,0.988

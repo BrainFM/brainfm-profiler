@@ -1,4 +1,4 @@
-dataset,domain,n_modalities,lodo_transfer_R3,role
+dataset,domain,n_modalities,lodo_transfer_medical,role
 NFBS,healthy,1,0.0,hold-out (isolated)
 OASIS-1,neurodegenerative,1,0.003,hold-out (isolated)
 3D-MR-MS,multiple_sclerosis,4,0.233,hold-out (isolated)

@@ -1,4 +1,4 @@
-"""R1: handcrafted per-volume image statistics -> outputs/emb_R1.parquet.
+"""handcrafted: per-volume image statistics -> outputs/emb_handcrafted.parquet.
 
 Usage: python features_r1.py [--workers N]
 """
@@ -17,7 +17,7 @@ from _env import OUT, LOG  # noqa: E402
 from io_utils import center_crop_pad, load_volume, resample_iso  # noqa: E402
 
 PCTS = [1, 5, 25, 50, 75, 95, 99]
-OUT_PATH = OUT / "emb_R1.parquet"
+OUT_PATH = OUT / "emb_handcrafted.parquet"
 
 
 def features(path, meta):
@@ -93,7 +93,7 @@ def main(workers=4):
             "\n".join(f"{e['image_id']}\t{e['_error']}" for e in errors) + "\n")
 
     final = pd.read_parquet(OUT_PATH)
-    print(f"\nemb_R1.parquet: {len(final)} rows / {len(idx)} index rows, "
+    print(f"\nemb_handcrafted.parquet: {len(final)} rows / {len(idx)} index rows, "
           f"{final.isna().any(axis=1).sum()} rows with NaN, {len(errors)} errors")
 
 

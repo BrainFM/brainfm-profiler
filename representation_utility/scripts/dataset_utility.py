@@ -20,7 +20,7 @@ from _env import OUT, SEED  # noqa: E402
 from analyze_representations import load_rep  # noqa: E402
 from results_lib import RESULTS, add_number, save_fig, save_table  # noqa: E402
 
-REP = "R3"
+REP = "medical"
 N_PCA = 100
 MODS = ["T1", "T1c", "T2", "FLAIR"]
 PLUS = ["emb_spread", "n_modalities", "log_n_subjects", "domain_rarity"]

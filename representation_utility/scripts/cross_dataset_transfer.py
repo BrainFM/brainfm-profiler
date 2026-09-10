@@ -28,7 +28,7 @@ from analyze_representations import REPS, features, load_rep  # noqa: E402
 from results_lib import add_number, save_fig, save_table  # noqa: E402
 
 MODS = ["T1", "T1c", "T2", "FLAIR"]  # PD dropped (IXI-only)
-FIG_REP = "R3"
+FIG_REP = "medical"
 N_PCA = 100
 
 
@@ -176,12 +176,12 @@ def _numbers(lodo_df, within_all, ret_df):
                    f"mean accuracy {s['accuracy'].mean():.2f}, worst {s['accuracy'].min():.2f} "
                    f"({s.loc[s['accuracy'].idxmin(), 'dataset']})")
     g = within_all.merge(lodo_df[lodo_df["representation"] == FIG_REP][["dataset", "accuracy"]], on="dataset")
-    add_number("Transfer gap (R3)",
+    add_number("Transfer gap (medical)",
                f"within-dataset modality accuracy mean {g['within_bacc'].mean():.2f} collapses to "
                f"{g['accuracy'].mean():.2f} leave-one-dataset-out; "
-               f"{(lodo_df[lodo_df.representation == 'R3']['accuracy'] < 0.3).sum()}/17 datasets transfer below 0.30")
+               f"{(lodo_df[lodo_df.representation == 'medical']['accuracy'] < 0.3).sum()}/17 datasets transfer below 0.30")
     mm = ret_df[(ret_df.representation == FIG_REP) & (ret_df.dataset.isin(within_all.dataset))]
-    add_number("Retrieval purity, multi-modality datasets (R3, k=10)",
+    add_number("Retrieval purity, multi-modality datasets (medical, k=10)",
                "neighbours share dataset far more than modality, e.g. "
                + "; ".join(f"{r.dataset} {r.dataset_purity:.2f} vs {r.modality_purity:.2f}"
                            for _, r in mm.nsmallest(3, "modality_purity").iterrows()))

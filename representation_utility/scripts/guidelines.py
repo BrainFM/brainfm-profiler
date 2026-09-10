@@ -14,10 +14,10 @@ HOLDOUT_THRESH = 0.30
 def main():
     lodo = pd.read_csv(RESULTS / "tables" / "lodo_transfer.csv")
     rec = lodo[["dataset", "domain", "n_modalities", "transfer_score"]].copy()
-    rec = rec.rename(columns={"transfer_score": "lodo_transfer_R3"})
-    rec["role"] = rec["lodo_transfer_R3"].apply(
+    rec = rec.rename(columns={"transfer_score": "lodo_transfer_medical"})
+    rec["role"] = rec["lodo_transfer_medical"].apply(
         lambda v: "hold-out (isolated)" if v < HOLDOUT_THRESH else "pool")
-    rec = rec.sort_values("lodo_transfer_R3")
+    rec = rec.sort_values("lodo_transfer_medical")
     save_table(rec.round(3), "holdout_recommendation")
 
     isolated = rec[rec["role"].str.startswith("hold-out")]["dataset"].tolist()

@@ -1,0 +1,24 @@
+\begin{tabular}{llrr}
+\toprule
+test & subset & value & p \\
+\midrule
+DRUS vs contribution & all (n=17) & -0.100 & 0.701 \\
+DRUS vs transfer\_score & all (n=17) & -0.107 & 0.684 \\
+component: emb\_spread & vs contribution & -0.353 & 0.165 \\
+component: n\_modalities & vs contribution & 0.234 & 0.365 \\
+component: log\_n\_subjects & vs contribution & -0.197 & 0.449 \\
+component: domain\_rarity & vs contribution & -0.274 & 0.287 \\
+component: aniso\_frac & vs contribution & -0.359 & 0.156 \\
+component: orient\_entropy & vs contribution & 0.117 & 0.654 \\
+component: redundancy & vs contribution & 0.237 & 0.360 \\
+ablate emb\_spread & vs contribution & 0.154 & NaN \\
+ablate n\_modalities & vs contribution & -0.140 & NaN \\
+ablate log\_n\_subjects & vs contribution & -0.002 & NaN \\
+ablate domain\_rarity & vs contribution & 0.069 & NaN \\
+ablate aniso\_frac & vs contribution & -0.208 & NaN \\
+ablate orient\_entropy & vs contribution & -0.025 & NaN \\
+ablate redundancy & vs contribution & 0.132 & NaN \\
+weight sensitivity (300x) & vs contribution & -0.121 & 0.071 \\
+LODO ranking stability & all & 0.998 & 0.988 \\
+\bottomrule
+\end{tabular}

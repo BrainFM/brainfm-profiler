@@ -21,7 +21,7 @@ from _env import OUT, SEED  # noqa: E402
 from results_lib import add_number, save_fig, save_table  # noqa: E402
 
 ID_COLS = ["image_id", "dataset", "domain", "patient", "modality"]
-REPS = ["R1", "R2", "R3", "R4"]
+REPS = ["handcrafted", "untrained", "medical", "selfsup"]
 N_PCA = 100
 N_PERM = 100
 

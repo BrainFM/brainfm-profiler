@@ -1,8 +1,9 @@
 """Frozen deep embeddings per volume -> outputs/emb_<model>.parquet.
 
-Usage: python extract_embeddings.py --model R2|R3 [--batch 4] [--workers 4]
-  R2 = random-init 3D DenseNet121 (baseline)
-  R3 = MedicalNet ResNet-34, pretrained
+Usage: python extract_embeddings.py --model untrained|medical|selfsup [--batch 4] [--workers 4]
+  untrained = random-init 3D DenseNet121
+  medical   = MedicalNet ResNet-34, pretrained
+  selfsup   = SwinUNETR self-supervised encoder
 """
 from __future__ import annotations
 import argparse
@@ -26,17 +27,17 @@ from io_utils import prepare  # noqa: E402
 def build_model(name):
     from monai.networks.nets import DenseNet121, SwinUNETR, resnet34
     torch.manual_seed(SEED)
-    if name == "R2":
+    if name == "untrained":
         m = DenseNet121(spatial_dims=3, in_channels=1, out_channels=2)
         feats = m.features
 
         def fwd(x):
             return torch.flatten(F.adaptive_avg_pool3d(F.relu(feats(x)), 1), 1)
-    elif name == "R3":
+    elif name == "medical":
         m = resnet34(spatial_dims=3, n_input_channels=1, num_classes=2, pretrained=True,
                      feed_forward=False, shortcut_type="A", bias_downsample=True)
         fwd = m
-    elif name == "R4":
+    elif name == "selfsup":
         m = SwinUNETR(in_channels=1, out_channels=1, feature_size=48, use_checkpoint=False)
         m.load_from(torch.load(WEIGHTS / "model_swinvit.pt", map_location="cpu", weights_only=False))
         swin = m.swinViT
@@ -71,7 +72,7 @@ def sanity_pca(name, emb_df):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--model", required=True, choices=["R2", "R3", "R4"])
+    ap.add_argument("--model", required=True, choices=["untrained", "medical", "selfsup"])
     ap.add_argument("--batch", type=int, default=4)
     ap.add_argument("--workers", type=int, default=4)
     args = ap.parse_args()
