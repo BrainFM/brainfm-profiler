@@ -19,12 +19,12 @@ import torch
 import torch.nn.functional as F
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _env import OUT, DEVICE, SEED  # noqa: E402
+from _env import OUT, DEVICE, SEED, WEIGHTS  # noqa: E402
 from io_utils import prepare  # noqa: E402
 
 
 def build_model(name):
-    from monai.networks.nets import DenseNet121, resnet34
+    from monai.networks.nets import DenseNet121, SwinUNETR, resnet34
     torch.manual_seed(SEED)
     if name == "R2":
         m = DenseNet121(spatial_dims=3, in_channels=1, out_channels=2)
@@ -36,8 +36,15 @@ def build_model(name):
         m = resnet34(spatial_dims=3, n_input_channels=1, num_classes=2, pretrained=True,
                      feed_forward=False, shortcut_type="A", bias_downsample=True)
         fwd = m
+    elif name == "R4":
+        m = SwinUNETR(in_channels=1, out_channels=1, feature_size=48, use_checkpoint=False)
+        m.load_from(torch.load(WEIGHTS / "model_swinvit.pt", map_location="cpu", weights_only=False))
+        swin = m.swinViT
+
+        def fwd(x):
+            return torch.flatten(F.adaptive_avg_pool3d(swin(x, normalize=True)[4], 1), 1)
     else:
-        raise NotImplementedError(f"{name}: only R2/R3 here (R4 = Step 9)")
+        raise NotImplementedError(name)
     m.eval().to(DEVICE)
     for p in m.parameters():
         p.requires_grad_(False)
