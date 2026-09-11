@@ -74,23 +74,48 @@ def perm_null(X, y, groups, n_perm=N_PERM, seed=SEED):
     return np.array(null)
 
 
+def _terciles(s):
+    q1, q2 = s.quantile([1 / 3, 2 / 3])
+    return pd.cut(s, [-np.inf, q1, q2, np.inf], labels=["low", "medium", "high"])
+
+
+def add_qc_factors(idx):
+    """Merge per-scan QC factors (qc_factors.parquet) and derive intensity scale."""
+    qc_path = OUT / "qc_factors.parquet"
+    if qc_path.exists():
+        idx = idx.merge(pd.read_parquet(qc_path), on="image_id", how="left")
+    hc = pd.read_parquet(OUT / "emb_handcrafted.parquet")[["image_id", "p50"]]
+    idx = idx.merge(hc, on="image_id", how="left")
+    idx["intensity_scale"] = _terciles(np.log(idx["p50"].clip(lower=1e-3)))
+    return idx
+
+
 def build_labels(idx):
-    """Return dict factor -> (row mask, label series)."""
+    """Return dict factor -> (row mask, label series). Ordered content -> non-biological."""
     ax = idx["axcodes"].copy()
     ax[ax.groupby(ax).transform("size") < 50] = "OTHER"
     ixi = idx["dataset"] == "IXI"
     site = idx["image_id"].str.split("_").str[1].str.split("-").str[1].where(ixi)
-    return {
-        "dataset": (idx.index, idx["dataset"]),
+    ts = idx["template_space"].copy() if "template_space" in idx else pd.Series(index=idx.index, dtype=object)
+    if ts.notna().any():
+        ts[ts.groupby(ts).transform("size") < 50] = "other"
+    factors = {
         "modality (no PD)": (idx.index[idx["modality"] != "PD"], idx["modality"]),
         "orientation": (idx.index, ax),
-        "anisotropy": (idx.index, idx["anisotropy_cat"]),
+        "voxel spacing": (idx.index, idx["anisotropy_cat"]),
+        "template space": (idx.index[ts.notna()], ts),
+        "intensity scale": (idx.index[idx["intensity_scale"].notna()], idx["intensity_scale"]),
+        "bias field": (idx.index[idx["biasfield_cat"].notna()], idx["biasfield_cat"]) if "biasfield_cat" in idx else None,
+        "motion/ghosting (EFC)": (idx.index[idx["efc_cat"].notna()], idx["efc_cat"]) if "efc_cat" in idx else None,
         "site (IXI only)": (idx.index[ixi], site),
+        "dataset": (idx.index, idx["dataset"]),
     }
+    return {k: v for k, v in factors.items() if v is not None}
 
 
 def main():
     idx = pd.read_parquet(OUT / "file_index.parquet").reset_index(drop=True)
+    idx = add_qc_factors(idx)
     factors = build_labels(idx)
 
     var_rows, dec_rows = [], []
@@ -116,7 +141,7 @@ def main():
             print(f"{name} {fac:18s} k={k:2d} bAcc={acc:.3f}±{acc_sd:.3f} AUC={auc:.3f} "
                   f"null={null.mean():.3f} p={dec_rows[-1]['p_value']:.3f}")
 
-    var = pd.DataFrame(var_rows).pivot(index="factor", columns="representation", values="eta_sq").reset_index()
+    var = pd.DataFrame(var_rows).pivot(index="factor", columns="representation", values="eta_sq")[REPS].reset_index()
     save_table(var, "variance_explained")
     dec = pd.DataFrame(dec_rows)
     save_table(dec, "decodability")
