@@ -1,0 +1,13 @@
+check,representation,mean_delta,p,n
+wilcoxon_all17,handcrafted,-0.03303569664423441,0.050537109375,17
+mean_delta_isolated_multi,handcrafted,-0.07462962962962963,,3
+wilcoxon_all17,untrained,-0.046937848117612056,0.1032921711374491,17
+mean_delta_isolated_multi,untrained,-0.01703703703703698,,3
+wilcoxon_all17,medical,0.019327926732608545,0.3060455322265625,17
+mean_delta_isolated_multi,medical,0.031851851851851874,,3
+wilcoxon_all17,selfsup,-0.005453807905326937,0.963226318359375,17
+mean_delta_isolated_multi,selfsup,-0.0162962962962963,,3
+stability_seed43_all17,medical,0.019131848301235984,,17
+stability_seed43_isolated_multi,medical,0.031851851851851874,,3
+stability_seed44_all17,medical,0.020061552422583444,,17
+stability_seed44_isolated_multi,medical,0.031851851851851874,,3

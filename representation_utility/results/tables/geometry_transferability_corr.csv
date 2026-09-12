@@ -1,0 +1,8 @@
+feature,spearman_r,mantel_p,n_pairs
+distance_handcrafted,-0.1128824507169207,0.2715,144
+distance_untrained,-0.20004103477507973,0.041,144
+distance_medical,-0.22761434293048471,0.0195,144
+distance_selfsup,-0.16964165906840062,0.0915,144
+amplification_handcrafted_over_untrained,-0.01776975641815724,0.8715,144
+amplification_medical_over_untrained,-0.1820001613200848,0.0545,144
+amplification_selfsup_over_untrained,-0.07226932017264845,0.494,144
