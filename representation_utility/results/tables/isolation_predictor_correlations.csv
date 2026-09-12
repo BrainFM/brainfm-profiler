@@ -1,0 +1,5 @@
+feature,spearman_rho,p
+aniso_frac,-0.0584,0.8238
+template_space_mismatch,-0.3809,0.1314
+orientation_rarity,-0.0511,0.8457
+skull_stripped,-0.4475,0.0717

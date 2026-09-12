@@ -1,0 +1,9 @@
+factor,probe,condition,balanced_acc,representation
+dataset,MLP,before,0.8188686449715862,handcrafted
+dataset,MLP,after,0.3116420364191915,handcrafted
+dataset,MLP,before,0.8546993381279525,untrained
+dataset,MLP,after,0.21149938512000346,untrained
+dataset,MLP,before,0.8085785471194301,medical
+dataset,MLP,after,0.14332400791987823,medical
+dataset,MLP,before,0.7590987848538248,selfsup
+dataset,MLP,after,0.12373904446549999,selfsup

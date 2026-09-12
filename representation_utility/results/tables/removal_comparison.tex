@@ -1,0 +1,22 @@
+\begin{tabular}{lllrrrr}
+\toprule
+representation & method & method\_type & dims\_removed & lodo\_before & lodo\_after & lodo\_random\_control \\
+\midrule
+handcrafted & INLP & linear (iterative, retention-guarded) & 13.000 & 0.443 & 0.513 & 0.412 \\
+handcrafted & LEACE & linear (closed-form, minimal-damage) & 16.000 & 0.443 & 0.460 & 0.476 \\
+handcrafted & CORAL & affine (distribution alignment, full-rank) & NaN & 0.443 & 0.349 & 0.310 \\
+handcrafted & Adversarial (DANN) & non-linear (learned, full-rank) & NaN & 0.443 & 0.443 & 0.449 \\
+untrained & INLP & linear (iterative, retention-guarded) & 4.000 & 0.554 & 0.308 & 0.547 \\
+untrained & LEACE & linear (closed-form, minimal-damage) & 16.000 & 0.554 & 0.398 & 0.503 \\
+untrained & CORAL & affine (distribution alignment, full-rank) & NaN & 0.554 & 0.395 & 0.246 \\
+untrained & Adversarial (DANN) & non-linear (learned, full-rank) & NaN & 0.554 & 0.478 & 0.466 \\
+medical & INLP & linear (iterative, retention-guarded) & 6.000 & 0.533 & 0.393 & 0.474 \\
+medical & LEACE & linear (closed-form, minimal-damage) & 16.000 & 0.533 & 0.424 & 0.404 \\
+medical & CORAL & affine (distribution alignment, full-rank) & NaN & 0.533 & 0.408 & 0.291 \\
+medical & Adversarial (DANN) & non-linear (learned, full-rank) & NaN & 0.533 & 0.440 & 0.444 \\
+selfsup & INLP & linear (iterative, retention-guarded) & 3.000 & 0.517 & 0.425 & 0.517 \\
+selfsup & LEACE & linear (closed-form, minimal-damage) & 16.000 & 0.517 & 0.390 & 0.443 \\
+selfsup & CORAL & affine (distribution alignment, full-rank) & NaN & 0.517 & 0.401 & 0.240 \\
+selfsup & Adversarial (DANN) & non-linear (learned, full-rank) & NaN & 0.517 & 0.318 & 0.414 \\
+\bottomrule
+\end{tabular}

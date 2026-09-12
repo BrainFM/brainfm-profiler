@@ -1,0 +1,17 @@
+representation,method,method_type,dims_removed,lodo_before,lodo_after,lodo_random_control
+handcrafted,INLP,"linear (iterative, retention-guarded)",13.0,0.4434,0.5129,0.4118
+handcrafted,LEACE,"linear (closed-form, minimal-damage)",16.0,0.4434,0.4596,0.4756
+handcrafted,CORAL,"affine (distribution alignment, full-rank)",,0.4434,0.3491,0.31
+handcrafted,Adversarial (DANN),"non-linear (learned, full-rank)",,0.4434,0.4432,0.4487
+untrained,INLP,"linear (iterative, retention-guarded)",4.0,0.5537,0.3079,0.5469
+untrained,LEACE,"linear (closed-form, minimal-damage)",16.0,0.5537,0.3977,0.5035
+untrained,CORAL,"affine (distribution alignment, full-rank)",,0.5537,0.3946,0.2462
+untrained,Adversarial (DANN),"non-linear (learned, full-rank)",,0.5537,0.478,0.4657
+medical,INLP,"linear (iterative, retention-guarded)",6.0,0.5332,0.3926,0.4744
+medical,LEACE,"linear (closed-form, minimal-damage)",16.0,0.5332,0.4236,0.4035
+medical,CORAL,"affine (distribution alignment, full-rank)",,0.5332,0.4083,0.2909
+medical,Adversarial (DANN),"non-linear (learned, full-rank)",,0.5332,0.4399,0.4443
+selfsup,INLP,"linear (iterative, retention-guarded)",3.0,0.5175,0.4246,0.5174
+selfsup,LEACE,"linear (closed-form, minimal-damage)",16.0,0.5175,0.3902,0.4426
+selfsup,CORAL,"affine (distribution alignment, full-rank)",,0.5175,0.4007,0.2403
+selfsup,Adversarial (DANN),"non-linear (learned, full-rank)",,0.5175,0.3175,0.4144
