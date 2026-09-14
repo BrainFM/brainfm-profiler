@@ -134,18 +134,75 @@ def main():
 def _figure(feats):
     import matplotlib.pyplot as plt
 
-    fig, ax = plt.subplots(figsize=(6.5, 4.5))
+    fig, ax = plt.subplots(figsize=(7, 5))
     colors = np.where(feats["isolated"], "#c44e52", "#4c72b0")
-    ax.scatter(feats["n_outlier_flags"] + np.random.default_rng(0).uniform(-0.08, 0.08, len(feats)),
-               feats["transfer_score"], c=colors, s=55)
-    for ds, r in feats.iterrows():
-        ax.annotate(ds, (r["n_outlier_flags"], r["transfer_score"]), fontsize=6,
-                    xytext=(4, 2), textcoords="offset points")
+    x = feats["n_outlier_flags"].to_numpy(dtype=float) + np.random.default_rng(0).uniform(
+        -0.08, 0.08, len(feats))
+    y = feats["transfer_score"].to_numpy(dtype=float)
+    ax.scatter(x, y, c=colors, s=55, zorder=3)
     ax.axhline(ISOLATED_THRESHOLD, color="k", lw=0.8, ls=":", label=f"isolated threshold ({ISOLATED_THRESHOLD})")
     ax.set_xlabel("number of acquisition-outlier flags (0-3)")
     ax.set_ylabel("LODO modality transfer score")
     ax.set_title("Outlier-flag count vs. measured transfer isolation")
-    ax.legend(fontsize=8)
+    ax.set_ylim(-0.05, 1.12)
+    ax.legend(fontsize=8, loc="lower right")
+
+    # Several datasets share (near-)identical (flags, transfer_score)
+    # coordinates -- e.g. 3D-MR-MS and MS-60 are an exact tie -- so a fixed
+    # data-space label offset makes names overlap. Do collision avoidance in
+    # *display pixels* instead, which is independent of the axis scale: for
+    # each label, try a small, bounded set of candidate offsets (right/above,
+    # then left/above, climbing a little each round) and take the first that
+    # clears every already-placed label *and* every marker -- a label can
+    # land on top of a different point's dot, not just another label's text,
+    # which is what OASIS-2 overlapping BGSP's marker was. An earlier,
+    # unbounded version let labels climb straight through a whole column of
+    # nearby markers while trying to escape, pushing several off the top of
+    # the axes entirely; capping the search keeps it local.
+    # A point-distance collision check isn't enough: "BraTS25-MET" is much
+    # wider than "IXI", so a fixed clearance radius either overlaps long
+    # names or wastes space around short ones. Model every marker and every
+    # label as an axis-aligned box in display pixels and require actual
+    # non-overlap, which is what a reader's eye responds to.
+    fig.canvas.draw()
+    px_per_pt = fig.dpi / 72.0
+    marker_r = 5.0  # matches scatter(s=55)'s approximate on-screen radius
+    all_marker_xy = [np.array(ax.transData.transform((xi, yi))) for xi, yi in zip(x, y)]
+    placed: list[tuple[float, float, float, float]] = [
+        (mx - marker_r, my - marker_r, mx + marker_r, my + marker_r) for mx, my in all_marker_xy
+    ]
+
+    def label_box(text, anchor_px, dx_pt, dy_pt, ha):
+        w_px = 0.62 * 6.5 * px_per_pt * len(text)  # ~0.62em/char at this font+size
+        h_px = 8.5 * px_per_pt
+        cx = anchor_px[0] + dx_pt * px_per_pt
+        cy = anchor_px[1] + dy_pt * px_per_pt
+        x0 = cx if ha == "left" else cx - w_px
+        return (x0, cy - h_px / 2, x0 + w_px, cy + h_px / 2)
+
+    def overlaps(a, b, pad=1.5):
+        return not (a[2] + pad < b[0] or b[2] + pad < a[0] or a[3] + pad < b[1] or b[3] + pad < a[1])
+
+    order = np.argsort(y)
+    candidates_pt = [(6, dy) for dy in (3, 13, 23, 33, 43, 53)] + [(-6, dy) for dy in (3, 13, 23, 33, 43, 53)]
+    for idx in order:
+        ds = feats.index[idx]
+        anchor_px = all_marker_xy[idx]
+        best_offset, best_n_overlaps = candidates_pt[0], None
+        for dx_pt, dy_pt in candidates_pt:
+            ha = "left" if dx_pt > 0 else "right"
+            box = label_box(ds, anchor_px, dx_pt, dy_pt, ha)
+            n_overlaps = sum(1 for p in placed if overlaps(box, p))
+            if best_n_overlaps is None or n_overlaps < best_n_overlaps:
+                best_n_overlaps, best_offset = n_overlaps, (dx_pt, dy_pt)
+            if n_overlaps == 0:
+                break
+        dx_pt, dy_pt = best_offset
+        ha = "left" if dx_pt > 0 else "right"
+        ax.annotate(ds, (x[idx], y[idx]), fontsize=6.5, xytext=(dx_pt, dy_pt),
+                    textcoords="offset points", annotation_clip=False, ha=ha)
+        placed.append(label_box(ds, anchor_px, dx_pt, dy_pt, ha))
+
     save_fig(fig, "fig_isolation_predictor")
     plt.close(fig)
 
