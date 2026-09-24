@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401,E402
 
 ROOT = Path(__file__).resolve().parent
-FIG_OUT = ROOT.parent / "Dissertation" / "figures"
+FIG_OUT = ROOT.parent.parent / "Dissertation" / "sections" / "datasets" / "figures"
 
 # 17-dataset corpus: the 13 "core" + 4 "added" datasets, matching the
 # representation-level analysis exactly (MSSEG-2 dropped, not on the drive).
