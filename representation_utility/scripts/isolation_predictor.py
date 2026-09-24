@@ -40,6 +40,18 @@ from results_lib import add_number, save_fig, save_table  # noqa: E402
 ISOLATED_THRESHOLD = 0.30  # matches guidelines.py's existing threshold
 RARE_COUNT = 50  # matches factor_frame's own rare-orientation-code cutoff
 
+# Hand-placed label offsets (dx_pt, dy_pt) for fig_isolation_predictor, in points
+# from each dataset's own marker; "ha" is which side of the offset point the text
+# hangs from. Overrides the automatic layout below for exactly these datasets --
+# useful when the auto search pushes a label further from its own point than a
+# human would, to clear a crowded neighbourhood. Edit freely; anything not listed
+# here still falls back to the automatic collision-avoiding placement.
+MANUAL_LABEL_OFFSETS = {
+    "BGSP": (8, 5, "left"),
+    "OASIS-1": (-5, 6, "right"),
+    "MS-60": (-10, 9, "right"),
+}
+
 # Already asserted as fact in the compiled dissertation
 # (cross_dataset_transfer.tex: "brain-only stripped volumes in a mostly
 # non-stripped pool (NFBS, BrainMetShare)"; UPENN-GBM confirmed unstripped
@@ -183,22 +195,30 @@ def _figure(feats):
     def overlaps(a, b, pad=1.5):
         return not (a[2] + pad < b[0] or b[2] + pad < a[0] or a[3] + pad < b[1] or b[3] + pad < a[1])
 
-    order = np.argsort(y)
+    # Datasets in MANUAL_LABEL_OFFSETS are placed first, at exactly the given
+    # offset, so the automatic search (for everything else) already sees them
+    # as obstacles and won't land on top of a hand-placed label.
+    order = list(MANUAL_LABEL_OFFSETS) + [
+        feats.index[i] for i in np.argsort(y) if feats.index[i] not in MANUAL_LABEL_OFFSETS
+    ]
     candidates_pt = [(6, dy) for dy in (3, 13, 23, 33, 43, 53)] + [(-6, dy) for dy in (3, 13, 23, 33, 43, 53)]
-    for idx in order:
-        ds = feats.index[idx]
+    for ds in order:
+        idx = feats.index.get_loc(ds)
         anchor_px = all_marker_xy[idx]
-        best_offset, best_n_overlaps = candidates_pt[0], None
-        for dx_pt, dy_pt in candidates_pt:
+        if ds in MANUAL_LABEL_OFFSETS:
+            dx_pt, dy_pt, ha = MANUAL_LABEL_OFFSETS[ds]
+        else:
+            best_offset, best_n_overlaps = candidates_pt[0], None
+            for dx_pt, dy_pt in candidates_pt:
+                ha = "left" if dx_pt > 0 else "right"
+                box = label_box(ds, anchor_px, dx_pt, dy_pt, ha)
+                n_overlaps = sum(1 for p in placed if overlaps(box, p))
+                if best_n_overlaps is None or n_overlaps < best_n_overlaps:
+                    best_n_overlaps, best_offset = n_overlaps, (dx_pt, dy_pt)
+                if n_overlaps == 0:
+                    break
+            dx_pt, dy_pt = best_offset
             ha = "left" if dx_pt > 0 else "right"
-            box = label_box(ds, anchor_px, dx_pt, dy_pt, ha)
-            n_overlaps = sum(1 for p in placed if overlaps(box, p))
-            if best_n_overlaps is None or n_overlaps < best_n_overlaps:
-                best_n_overlaps, best_offset = n_overlaps, (dx_pt, dy_pt)
-            if n_overlaps == 0:
-                break
-        dx_pt, dy_pt = best_offset
-        ha = "left" if dx_pt > 0 else "right"
         ax.annotate(ds, (x[idx], y[idx]), fontsize=6.5, xytext=(dx_pt, dy_pt),
                     textcoords="offset points", annotation_clip=False, ha=ha)
         placed.append(label_box(ds, anchor_px, dx_pt, dy_pt, ha))
