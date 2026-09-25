@@ -1,0 +1,17 @@
+\begin{tabular}{llrrrrrrrrrl}
+\toprule
+representation & method & dims\_removed & lodo\_before & lodo\_after & lodo\_random\_control & multi\_before & multi\_after & multi\_random\_control & dataset\_bacc\_before & dataset\_bacc\_after & note \\
+\midrule
+medical & INLP & 6.000 & 0.533 & 0.393 & 0.474 & 0.489 & 0.443 & 0.451 & 0.902 & 0.869 & check (existing fit) \\
+medical & LEACE & 16.000 & 0.533 & 0.424 & 0.404 & NaN & NaN & NaN & NaN & 0.271 & check (existing fit) \\
+medical & CORAL & NaN & 0.533 & 0.408 & 0.291 & 0.489 & 0.431 & 0.293 & 0.902 & 0.224 & check (existing fit) \\
+3dino & INLP & 15.000 & 0.693 & 0.628 & 0.725 & 0.641 & 0.628 & 0.655 & 0.931 & 0.758 & NaN \\
+3dino & LEACE & 16.000 & 0.693 & 0.627 & 0.604 & NaN & NaN & NaN & NaN & 0.217 & NaN \\
+3dino & CORAL & NaN & 0.693 & 0.583 & 0.305 & 0.641 & 0.628 & 0.331 & 0.931 & 0.201 & NaN \\
+3dino & Adversarial (DANN) & NaN & 0.693 & 0.385 & 0.538 & 0.641 & 0.358 & 0.513 & 0.931 & 0.845 & NaN \\
+sammed3d & INLP & 5.000 & 0.750 & 0.560 & 0.730 & 0.669 & 0.630 & 0.684 & 0.899 & 0.857 & NaN \\
+sammed3d & LEACE & 16.000 & 0.750 & 0.553 & 0.677 & NaN & NaN & NaN & NaN & 0.199 & NaN \\
+sammed3d & CORAL & NaN & 0.750 & 0.520 & 0.288 & 0.669 & 0.583 & 0.366 & 0.899 & 0.171 & NaN \\
+sammed3d & Adversarial (DANN) & NaN & 0.750 & 0.455 & 0.554 & 0.669 & 0.463 & 0.584 & 0.899 & 0.779 & NaN \\
+\bottomrule
+\end{tabular}
