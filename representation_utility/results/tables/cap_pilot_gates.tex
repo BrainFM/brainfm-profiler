@@ -1,0 +1,50 @@
+\begin{tabular}{lllrrlrl}
+\toprule
+rep & gate & item & value & threshold & passed & n & note \\
+\midrule
+untrained & control & intensity\_scale & 0.000 & 0.050 & True & 80 & max |d| / median between-dataset distance (5.38); excludes 5 header/affine voxel-size mismatch volumes (with them: 0.000) \\
+untrained & control & orientation\_flip & 0.000 & 0.050 & True & 80 & max |d| / median between-dataset distance (5.38); excludes 5 header/affine voxel-size mismatch volumes (with them: 0.480) \\
+untrained & G1\_consistency & slice\_thickness & 0.244 & 0.500 & False & 250 & null p99=0.289; 30876 pairs; levels pooled \\
+untrained & G1\_by\_level & slice\_thickness:mild & 0.242 & NaN & NaN & 83 & descriptive only \\
+untrained & G1\_by\_level & slice\_thickness:moderate & 0.241 & NaN & NaN & 83 & descriptive only \\
+untrained & G1\_by\_level & slice\_thickness:strong & 0.248 & NaN & NaN & 84 & descriptive only \\
+untrained & G1\_consistency & bias\_field & 0.018 & 0.500 & False & 255 & null p99=0.289; 32130 pairs; levels pooled \\
+untrained & G1\_by\_level & bias\_field:mild & 0.001 & NaN & NaN & 85 & descriptive only \\
+untrained & G1\_by\_level & bias\_field:moderate & 0.011 & NaN & NaN & 85 & descriptive only \\
+untrained & G1\_by\_level & bias\_field:strong & 0.081 & NaN & NaN & 85 & descriptive only \\
+untrained & G1\_consistency & noise & 0.141 & 0.500 & False & 255 & null p99=0.289; 32130 pairs; levels pooled \\
+untrained & G1\_by\_level & noise:mild & 0.110 & NaN & NaN & 85 & descriptive only \\
+untrained & G1\_by\_level & noise:moderate & 0.143 & NaN & NaN & 85 & descriptive only \\
+untrained & G1\_by\_level & noise:strong & 0.175 & NaN & NaN & 85 & descriptive only \\
+untrained & G1\_consistency & skull\_strip & 0.053 & 0.500 & False & 50 & null p99=0.289; 1225 pairs; levels pooled \\
+untrained & G1\_by\_level & skull\_strip:full & 0.053 & NaN & NaN & 50 & descriptive only \\
+untrained & G1\_consistency & GATE (factors passing) & 0.000 & 2.000 & False & 4 &  \\
+untrained & G2\_by\_factor & slice\_thickness & 0.017 & NaN & NaN & 250 & offset energy in this factor's top-2 alone \\
+untrained & G2\_by\_factor & bias\_field & 0.000 & NaN & NaN & 255 & offset energy in this factor's top-2 alone \\
+untrained & G2\_by\_factor & noise & 0.006 & NaN & NaN & 255 & offset energy in this factor's top-2 alone \\
+untrained & G2\_by\_factor & skull\_strip & 0.039 & NaN & NaN & 50 & offset energy in this factor's top-2 alone \\
+untrained & G2\_signal & explained fraction (rank 8) & 0.062 & 0.159 & False & 17 & random mean=0.079, p95=0.097, ratio=0.77, p=0.970 \\
+medical & control & intensity\_scale & 0.000 & 0.050 & True & 80 & max |d| / median between-dataset distance (5.32); excludes 5 header/affine voxel-size mismatch volumes (with them: 0.000) \\
+medical & control & orientation\_flip & 0.000 & 0.050 & True & 80 & max |d| / median between-dataset distance (5.32); excludes 5 header/affine voxel-size mismatch volumes (with them: 0.943) \\
+medical & G1\_consistency & slice\_thickness & 0.078 & 0.500 & False & 250 & null p99=0.301; 30876 pairs; levels pooled \\
+medical & G1\_by\_level & slice\_thickness:mild & 0.075 & NaN & NaN & 83 & descriptive only \\
+medical & G1\_by\_level & slice\_thickness:moderate & 0.072 & NaN & NaN & 83 & descriptive only \\
+medical & G1\_by\_level & slice\_thickness:strong & 0.088 & NaN & NaN & 84 & descriptive only \\
+medical & G1\_consistency & bias\_field & 0.018 & 0.500 & False & 255 & null p99=0.301; 32130 pairs; levels pooled \\
+medical & G1\_by\_level & bias\_field:mild & 0.001 & NaN & NaN & 85 & descriptive only \\
+medical & G1\_by\_level & bias\_field:moderate & 0.010 & NaN & NaN & 85 & descriptive only \\
+medical & G1\_by\_level & bias\_field:strong & 0.098 & NaN & NaN & 85 & descriptive only \\
+medical & G1\_consistency & noise & 0.044 & 0.500 & False & 255 & null p99=0.301; 32130 pairs; levels pooled \\
+medical & G1\_by\_level & noise:mild & 0.038 & NaN & NaN & 85 & descriptive only \\
+medical & G1\_by\_level & noise:moderate & 0.042 & NaN & NaN & 85 & descriptive only \\
+medical & G1\_by\_level & noise:strong & 0.056 & NaN & NaN & 85 & descriptive only \\
+medical & G1\_consistency & skull\_strip & 0.068 & 0.500 & False & 50 & null p99=0.301; 1225 pairs; levels pooled \\
+medical & G1\_by\_level & skull\_strip:full & 0.068 & NaN & NaN & 50 & descriptive only \\
+medical & G1\_consistency & GATE (factors passing) & 0.000 & 2.000 & False & 4 &  \\
+medical & G2\_by\_factor & slice\_thickness & 0.008 & NaN & NaN & 250 & offset energy in this factor's top-2 alone \\
+medical & G2\_by\_factor & bias\_field & 0.020 & NaN & NaN & 255 & offset energy in this factor's top-2 alone \\
+medical & G2\_by\_factor & noise & 0.004 & NaN & NaN & 255 & offset energy in this factor's top-2 alone \\
+medical & G2\_by\_factor & skull\_strip & 0.026 & NaN & NaN & 50 & offset energy in this factor's top-2 alone \\
+medical & G2\_signal & explained fraction (rank 8) & 0.063 & 0.160 & False & 17 & random mean=0.080, p95=0.097, ratio=0.79, p=0.950 \\
+\bottomrule
+\end{tabular}

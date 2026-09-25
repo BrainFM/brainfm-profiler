@@ -1,0 +1,45 @@
+rep,gate,item,value,threshold,passed,n,note
+untrained,control,intensity_scale,3.256238730277664e-05,0.05,True,80,max |d| / median between-dataset distance (5.38); excludes 5 header/affine voxel-size mismatch volumes (with them: 0.000)
+untrained,control,orientation_flip,0.0,0.05,True,80,max |d| / median between-dataset distance (5.38); excludes 5 header/affine voxel-size mismatch volumes (with them: 0.480)
+untrained,G1_consistency,slice_thickness,0.24356840166892066,0.5,False,250,null p99=0.289; 30876 pairs; levels pooled
+untrained,G1_by_level,slice_thickness:mild,0.2422124192808138,,,83,descriptive only
+untrained,G1_by_level,slice_thickness:moderate,0.24060280270976386,,,83,descriptive only
+untrained,G1_by_level,slice_thickness:strong,0.24846270962809408,,,84,descriptive only
+untrained,G1_consistency,bias_field,0.01798841447708603,0.5,False,255,null p99=0.289; 32130 pairs; levels pooled
+untrained,G1_by_level,bias_field:mild,0.0007771247225474788,,,85,descriptive only
+untrained,G1_by_level,bias_field:moderate,0.011259438145393768,,,85,descriptive only
+untrained,G1_by_level,bias_field:strong,0.0808578782536158,,,85,descriptive only
+untrained,G1_consistency,noise,0.14111348071412952,0.5,False,255,null p99=0.289; 32130 pairs; levels pooled
+untrained,G1_by_level,noise:mild,0.1099615535610111,,,85,descriptive only
+untrained,G1_by_level,noise:moderate,0.142637800383933,,,85,descriptive only
+untrained,G1_by_level,noise:strong,0.175359747791997,,,85,descriptive only
+untrained,G1_consistency,skull_strip,0.05341182639154063,0.5,False,50,null p99=0.289; 1225 pairs; levels pooled
+untrained,G1_by_level,skull_strip:full,0.05341182639154063,,,50,descriptive only
+untrained,G1_consistency,GATE (factors passing),0.0,2.0,False,4,
+untrained,G2_by_factor,slice_thickness,0.01656947444179639,,,250,offset energy in this factor's top-2 alone
+untrained,G2_by_factor,bias_field,0.000475479473804085,,,255,offset energy in this factor's top-2 alone
+untrained,G2_by_factor,noise,0.006404597058807146,,,255,offset energy in this factor's top-2 alone
+untrained,G2_by_factor,skull_strip,0.03912836731116323,,,50,offset energy in this factor's top-2 alone
+untrained,G2_signal,explained fraction (rank 8),0.06151225336391433,0.15897633764798638,False,17,"random mean=0.079, p95=0.097, ratio=0.77, p=0.970"
+medical,control,intensity_scale,0.00010712622665493412,0.05,True,80,max |d| / median between-dataset distance (5.32); excludes 5 header/affine voxel-size mismatch volumes (with them: 0.000)
+medical,control,orientation_flip,0.0,0.05,True,80,max |d| / median between-dataset distance (5.32); excludes 5 header/affine voxel-size mismatch volumes (with them: 0.943)
+medical,G1_consistency,slice_thickness,0.07764004551093052,0.5,False,250,null p99=0.301; 30876 pairs; levels pooled
+medical,G1_by_level,slice_thickness:mild,0.07537576898688093,,,83,descriptive only
+medical,G1_by_level,slice_thickness:moderate,0.07197026408272238,,,83,descriptive only
+medical,G1_by_level,slice_thickness:strong,0.08789757693260035,,,84,descriptive only
+medical,G1_consistency,bias_field,0.018074854052454282,0.5,False,255,null p99=0.301; 32130 pairs; levels pooled
+medical,G1_by_level,bias_field:mild,0.0007401795100265508,,,85,descriptive only
+medical,G1_by_level,bias_field:moderate,0.009638528889552068,,,85,descriptive only
+medical,G1_by_level,bias_field:strong,0.09848754010451491,,,85,descriptive only
+medical,G1_consistency,noise,0.044097529610102076,0.5,False,255,null p99=0.301; 32130 pairs; levels pooled
+medical,G1_by_level,noise:mild,0.03821483699604939,,,85,descriptive only
+medical,G1_by_level,noise:moderate,0.04177503096383016,,,85,descriptive only
+medical,G1_by_level,noise:strong,0.05576483097694925,,,85,descriptive only
+medical,G1_consistency,skull_strip,0.068191614089186,0.5,False,50,null p99=0.301; 1225 pairs; levels pooled
+medical,G1_by_level,skull_strip:full,0.068191614089186,,,50,descriptive only
+medical,G1_consistency,GATE (factors passing),0.0,2.0,False,4,
+medical,G2_by_factor,slice_thickness,0.00817989031747016,,,250,offset energy in this factor's top-2 alone
+medical,G2_by_factor,bias_field,0.020194977010341106,,,255,offset energy in this factor's top-2 alone
+medical,G2_by_factor,noise,0.004445799853071001,,,255,offset energy in this factor's top-2 alone
+medical,G2_by_factor,skull_strip,0.026429582846877547,,,50,offset energy in this factor's top-2 alone
+medical,G2_signal,explained fraction (rank 8),0.06335836619573214,0.1597604905555312,False,17,"random mean=0.080, p95=0.097, ratio=0.79, p=0.950"

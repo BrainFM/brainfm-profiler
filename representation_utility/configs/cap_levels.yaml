@@ -1,0 +1,46 @@
+created: '2026-09-25'
+percentiles:
+  mild: 0.25
+  moderate: 0.5
+  strong: 0.9
+slice_thickness:
+  unit: mm, target slice thickness along the slice axis
+  source: 'file_index voxel_spacing, thickest side, volumes with thickest side > 1.5 mm (n=108); the full-corpus percentiles
+    are {''mild'': 1.0, ''moderate'': 1.0, ''strong'': 1.25} and would be no-ops (user decision 2026-09-25)'
+  levels:
+    mild: 4.8
+    moderate: 5.0
+    strong: 6.0
+bias_field:
+  unit: coefficient of variation of the multiplicative field over the foreground
+  source: qc_factors.parquet biasfield (n=4167)
+  levels:
+    mild: 0.0486
+    moderate: 0.1163
+    strong: 0.536
+noise:
+  unit: Rician sigma as a fraction of the tissue mean intensity
+  source: residual-MAD noise estimate on 340 volumes (20 per dataset, seed 42), cap_noise_estimates.csv
+  levels:
+    mild: 0.0492
+    moderate: 0.071
+    strong: 0.1222
+skull_strip:
+  unit: HD-BET brain mask applied (single level); only volumes with skull present
+  source: applies when > 5% of non-zero voxels lie outside the HD-BET mask
+  levels:
+    full: 1.0
+ghosting:
+  unit: torchio Ghosting intensity (4 ghosts, phase axis A-P); not in the pilot
+  source: not calibrated yet; qc EFC percentiles recorded for E4
+  efc_percentiles:
+    mild: 0.6437
+    moderate: 0.7893
+    strong: 0.9452
+  levels:
+    mild: 0.2
+    moderate: 0.4
+    strong: 0.8
+controls:
+  intensity_scale: 3.7
+  orientation_flip: flip axis 0 + swap axes 0/1, affine updated
