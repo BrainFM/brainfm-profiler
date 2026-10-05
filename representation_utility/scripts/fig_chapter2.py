@@ -15,10 +15,10 @@ DISS_FIG = Path("/Volumes/KHUE1TB/projects/Dissertation/sections/datasets/figure
 
 OLD, BRAIN, BROAD = "#8a8a85", "#eb6834", "#2a78d6"
 ENCODERS = [  # (key, label, colour, is_control)
-    ("handcrafted", "Image statistics", OLD, False),
+    ("handcrafted", "Handcrafted", OLD, False),
     ("untrained", "Untrained CNN", OLD, False),
     ("medical", "MedicalNet", OLD, False),
-    ("selfsup", "SwinUNETR (SSL)", OLD, False),
+    ("selfsup", "SwinUNETR", OLD, False),
     ("brainiac", "BrainIAC", BRAIN, False),
     ("brainfm", "BrainFM", BRAIN, False),
     ("sammed3d", "SAM-Med3D", BROAD, False),
@@ -48,9 +48,11 @@ def fig_transfer(pm: pd.DataFrame):
         ax.text(1.02, y, f"{vals.mean():.2f}", va="center", fontsize=8, color="#222222")
     ax.set_yticks(range(len(rows)), [r[1] for r in rows], fontsize=8.5)
     ax.axhline(2.5, color="#bbbbbb", lw=0.8, ls="--")
-    ax.text(0.005, 2.62, "controls", ha="left", va="bottom", fontsize=7.5, color="#555555")
+    # sits on the dashed separator, in the gap between the 3DINO bar and the controls
+    ax.text(0.995, 2.5, "controls below", ha="right", va="center", fontsize=7.5, color="#555555",
+            bbox=dict(facecolor="white", edgecolor="none", pad=1.0), zorder=4)
     ax.set_xlim(0, 1.0)
-    ax.set_xlabel("Balanced accuracy on the unseen dataset (10 multi-modality datasets)", fontsize=8.5)
+    ax.set_xlabel("Balanced accuracy on the unseen dataset (10 multi-sequence datasets)", fontsize=8.5)
     ax.tick_params(axis="x", labelsize=8)
     ax.grid(axis="x", color="#e5e5e5", lw=0.6, zorder=0)
     for s in ("top", "right"):
