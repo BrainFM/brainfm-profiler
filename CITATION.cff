@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the paper below."
+title: brainfm-profiler
+repository-code: "https://github.com/BrainFM/brainfm-profiler"
+license: MIT
+authors:
+  - family-names: Luu
+    given-names: Minh Sao Khue
+  - family-names: Benedichuk
+    given-names: Margaret V.
+  - family-names: Roppert
+    given-names: Ekaterina I.
+  - family-names: Kenzhin
+    given-names: Roman M.
+  - family-names: Tuchinov
+    given-names: Bair N.
+preferred-citation:
+  type: article
+  title: "A Structured Review and Quantitative Profiling of Public Brain MRI Datasets for Foundation Model Development"
+  authors:
+    - family-names: Luu
+      given-names: Minh Sao Khue
+    - family-names: Benedichuk
+      given-names: Margaret V.
+    - family-names: Roppert
+      given-names: Ekaterina I.
+    - family-names: Kenzhin
+      given-names: Roman M.
+    - family-names: Tuchinov
+      given-names: Bair N.
+  journal: Journal of Imaging
+  publisher:
+    name: MDPI
+  volume: 11
+  issue: 12
+  start: 454
+  year: 2025
+  doi: "10.3390/jimaging11120454"
+  url: "https://www.mdpi.com/2313-433X/11/12/454"
