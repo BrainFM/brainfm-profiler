@@ -1,0 +1,10 @@
+# local venv, model weights, large artifacts, secrets — not committed
+.venv/
+weights/
+outputs/
+figures/*.png
+logs/*
+!logs/.gitkeep
+*.parquet
+__pycache__/
+.env
