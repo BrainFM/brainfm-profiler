@@ -1,6 +1,6 @@
 # Dataset-specific directions limit transfer of brain MRI foundation model features
 
-Code and result tables for the preprint **Dataset-Specific Directions Limit Transfer of Brain MRI Foundation Model Features** (Luu and Tuchinov, 2026; arXiv link to be added).
+Code and result tables for the preprint **Dataset-Specific Directions Limit Transfer of Brain MRI Foundation Model Features** (arXiv link TBA).
 
 Frozen features of medical foundation models are known to retain where a scan came from and to lose accuracy on new datasets. This work asks why. Eight frozen representations are evaluated on 4,167 volumes from 17 public brain MRI datasets by predicting the MRI sequence (T1, T1c, T2, FLAIR) on a dataset held out from training.
 
@@ -97,14 +97,7 @@ The committed tables are the ones behind the reported numbers. Figures are writt
 
 ## Citation
 
-> Luu, M.S.K.; Tuchinov, B.N.
-> Dataset-Specific Directions Limit Transfer of Brain MRI Foundation Model Features. Preprint, 2026.
-
-The dataset selection follows our earlier review, which should also be cited if you use the dataset metadata:
-
-> Luu, M.S.K.; Benedichuk, M.V.; Roppert, E.I.; Kenzhin, R.M.; Tuchinov, B.N.
-> A Structured Review and Quantitative Profiling of Public Brain MRI Datasets for Foundation Model Development.
-> *Journal of Imaging* **2025**, *11*(12), 454. https://doi.org/10.3390/jimaging11120454
+Paper: arXiv link TBA.
 
 ## License
 
