@@ -21,7 +21,7 @@
 \captionsetup{font=small,labelfont=bf}
 \newcommand{\tabnote}[1]{\par\vspace{0.5ex}{\footnotesize\raggedright #1\par}}
 
-\title{Dataset-Specific Directions Limit Transfer of Brain MRI Foundation Model Features}
+\title{Dataset-Specific Encoding of Image Content Underlies Cross-Dataset Failure in Brain MRI Foundation Models}
 
 \author[1]{Minh Sao Khue Luu\,\orcidlink{0000-0002-6766-4966}}
 \author[1]{Bair N. Tuchinov\,\orcidlink{0000-0002-8931-9848}}
@@ -35,28 +35,19 @@
 \maketitle
 
 \begin{abstract}
-Brain MRI foundation models are pretrained and evaluated on pools of public
-datasets, each an independent study with its own disease, cohort, scanner and
-preprocessing. Frozen features of medical foundation models are known to
-retain where a scan came from and to lose accuracy on new datasets, but why
-they fail, and whether the failure can be anticipated and corrected, remains
-unclear. We evaluate eight frozen representations,
-from handcrafted statistics and an untrained network to brain-specific and
-broadly pretrained foundation models, on 4{,}167 volumes from 17 public
-datasets, by predicting the MRI sequence on a dataset held out from training.
-We make three contributions. First, every representation recognizes the
-sequence within a dataset (balanced accuracy 0.84--0.97), but only the
-broadly pretrained 3DINO and SAM-Med3D keep it on unseen datasets (0.72 and
-0.69, against 0.44--0.55 for all others, including two brain-specific
-models); controls show that this advantage is acquired during pretraining.
-Second, we introduce direction consistency, the agreement of class
-directions across datasets. It explains which datasets fail, for the sequence
-(Spearman $\rho=0.60$) and for sex ($\rho=0.42$), and without target labels
-identifies failing datasets better than confidence-based accuracy estimators,
-which fail on this shift. Third, four methods for removing the dataset signal,
-each with a matched control, never improve sequence transfer, because dataset
-and sequence share directions; alignment helps only where a centring test
-shows that the failure is a shift. Code is available at
+Frozen features of brain MRI foundation models lose accuracy on new datasets,
+a failure usually blamed on the features encoding where each scan came from.
+We show that the failure lies elsewhere. Across 17 public datasets and eight
+frozen representations, every representation recognizes the MRI sequence
+within each dataset, yet most fail on an unseen one. The cause is neither
+dataset encoding nor a shift of each dataset: the content itself is encoded
+along different directions in each dataset. This explains which datasets
+fail, for the sequence and for sex, and why removing the dataset signal with
+INLP, LEACE, CORAL or adversarial training never improves sequence transfer.
+Only the broadly pretrained 3DINO and SAM-Med3D encode the sequence
+consistently enough to transfer; the brain-specific BrainIAC and BrainFM do
+no better than an untrained network.
+Code is available at
 \url{https://github.com/BrainFM/brainfm-profiler/tree/main/representation_utility}.
 \end{abstract}
 
@@ -112,47 +103,34 @@ barely overlap between datasets and are confounded with dataset identity. Sex,
 available in ten datasets, serves as a second, anatomical label. Because the sequence is easily
 recognized within every dataset, a failure to transfer it cannot be blamed
 on missing information, which lets us study why transfer fails rather than
-only whether it does. Our contributions are:
+only whether it does. In short, we find that in most representations the
+difference between sequences is itself different in each dataset: this is
+not a shift, so centring does not repair it, and it ties the dataset signal
+to the content, so removing one removes the other. Our contributions are:
 
 \begin{itemize}
-  \item \textbf{In our comparison, broad pretraining, not brain-specific
-  pretraining, yields content that transfers across datasets.} Every representation recognizes
-  the sequence within a dataset, but only 3DINO and SAM-Med3D, pretrained on
-  large multi-organ CT and MRI collections, keep it on unseen datasets; two
-  brain-specific foundation models do no better than an untrained network.
-  Controls with random weights, swapped intensity scaling, skull-stripped
-  datasets and possible pretraining overlap attribute the advantage to
-  pretraining. This qualifies the earlier finding that pretraining adds
-  nothing over an untrained network~\cite{rahbar_frozen_2026}, and confirms on
-  real dataset shift what was seen for simulated artifacts~\cite{mielcarz_3d_2026}.
-  \item \textbf{A geometric account of why transfer fails, and a label-free
-  warning.} We define direction consistency, the agreement between the
-  directions that separate the classes inside each dataset. It explains which
-  held-out datasets fail, for the sequence and for sex, and ranks
-  representations by their transfer. Centring tests separate a disagreement of
-  directions (the sequence) from a shift of each dataset (partly, sex).
-  Computed from clusters of an unlabelled new dataset, consistency identifies
-  the datasets an encoder will fail on better than average
-  confidence~\cite{hendrycks_baseline_2017} and average thresholded
-  confidence~\cite{garg_leveraging_2022}, which do not work under this shift.
-  The idea follows work linking cross-lingual alignment to zero-shot
-  transfer~\cite{muller_first_2021, deshpande_when_2022}; we use it as a
-  diagnostic for frozen medical encoders.
-  \item \textbf{An explanation of why post-hoc dataset-signal removal does
-  not help.} Four methods (INLP, LEACE, CORAL and adversarial training), each
-  with a matched control, are fitted inside every leave-one-dataset-out split
-  for all eight representations. None improves sequence transfer, extending
-  the held-out-site result for INLP and ComBat~\cite{rahbar_frozen_2026}, and
-  the measured loss of sequence information, together with the consistency
-  analysis, shows why: dataset and sequence share feature directions. For sex,
-  distribution alignment helps only where the centring test shows a shift, so
-  the test indicates in advance whether removal is worth trying.
+  \item \textbf{A diagnosis of cross-dataset failure that also explains why
+  removing the dataset signal does not help.} We separate three candidate
+  causes of the failure: encoding of the source dataset, a shift of each
+  dataset, and disagreement of the class directions between datasets. To tell
+  them apart, we combine centring tests with a direction-consistency score
+  adapted from cross-lingual transfer~\cite{muller_first_2021,
+  deshpande_when_2022}. With these tools we identify the cause for the
+  sequence and for sex, rank representations from the training datasets
+  alone, and explain why four removal methods (INLP, LEACE, CORAL and
+  adversarial training) fail to improve transfer, revising the earlier
+  explanation of this failure on held-out sites~\cite{rahbar_frozen_2026}.
+  \item \textbf{A controlled comparison of brain-specific and broadly
+  pretrained foundation models.} We compare two brain-specific and two
+  broadly pretrained foundation models against four baseline encoders, with
+  controls for architecture, input scaling, skull stripping and pretraining
+  overlap. We show that broad multi-organ pretraining, not brain-specific
+  pretraining, yields features that transfer across datasets, qualifying the
+  earlier finding that pretraining adds nothing~\cite{rahbar_frozen_2026}.
 \end{itemize}
 
-\noindent We also show that strong dataset decodability does not by itself
-indicate poor transfer, in line with observations in
-mammography~\cite{nguyen_benchmarking_2026}, and we release the code, the
-list of sampled scans and the result tables.
+\noindent We release the code, the list of sampled scans and the result
+tables.
 
 \section{Related Work}
 
@@ -199,7 +177,9 @@ represent the medical centre strongly, and errors follow same-centre
 confounders; PathoROB~\cite{komen_towards_2025} extends this to 20 models and
 34 centres, and image-level processing does not remove the hospital
 signatures~\cite{komen_histopathological_2024}. These studies establish that
-the failure occurs. Our aim is to explain it in brain MRI, by measuring whether the directions that separate a content label
+the failure occurs, and Germani et al.\ add diagnostics of shortcut risk at
+the level of the representation. Our aim is to explain the failure in brain
+MRI, by measuring whether the directions that separate a content label
 agree across datasets, by separating a shift of each dataset from a
 disagreement of directions, and by showing why removing the dataset signal
 cannot repair the second.
@@ -468,6 +448,7 @@ means, of the cross-lingual alignment measures that predict zero-shot
 transfer in multilingual language models~\cite{muller_first_2021,
 deshpande_when_2022}.
 
+\paragraph{Centring tests.}
 Two centring tests separate a shift of each dataset's features from a
 disagreement of directions. \emph{Label-free centring} subtracts each
 dataset's feature mean, including that of the held-out dataset, before the
@@ -489,22 +470,6 @@ averaged, so that a different mix of sequences between the sexes does not
 enter it; consistency is the cosine between this direction and the mean
 direction of the training datasets, and the centring tests are defined as
 above.
-
-\paragraph{Predicting failure without target labels.}
-A user deploying a frozen encoder on a new dataset usually has no labels for
-it. We therefore compute consistency from the unlabelled held-out features:
-they are clustered with $k$-means, with $k$ the number of sequences in the
-dataset (known from file names in practice), and the cluster offsets are
-matched to the training sequence offsets by maximizing the summed cosine
-(Hungarian algorithm); the score is the mean matched cosine. It is compared
-with two standard label-free estimators of accuracy under distribution shift:
-the average maximum softmax probability of the
-probe~\cite{hendrycks_baseline_2017}, and average thresholded confidence
-(ATC)~\cite{garg_leveraging_2022}, whose threshold is set by patient-grouped
-cross-validation on the training datasets. Each score is evaluated by its
-Spearman correlation with the measured transfer across the held-out datasets
-of one representation, the question a user faces, and averaged over
-representations.
 
 \paragraph{Post-hoc removal of the dataset signal.}
 Four standard methods are applied unmodified, covering linear erasure,
@@ -533,6 +498,22 @@ method actually removed. For sex, LEACE and CORAL with their controls are
 applied in the same way; INLP and the adversarial network are not, because
 their stopping rule and training objective here are built to retain the
 sequence.
+
+\paragraph{Predicting failure without target labels.}
+A user deploying a frozen encoder on a new dataset usually has no labels for
+it. We therefore compute consistency from the unlabelled held-out features:
+they are clustered with $k$-means, with $k$ the number of sequences in the
+dataset (known from file names in practice), and the cluster offsets are
+matched to the training sequence offsets by maximizing the summed cosine
+(Hungarian algorithm); the score is the mean matched cosine. It is compared
+with two standard label-free estimators of accuracy under distribution shift:
+the average maximum softmax probability of the
+probe~\cite{hendrycks_baseline_2017}, and average thresholded confidence
+(ATC)~\cite{garg_leveraging_2022}, whose threshold is set by patient-grouped
+cross-validation on the training datasets. Each score is evaluated by its
+Spearman correlation with the measured transfer across the held-out datasets
+of one representation, the question a user faces, and averaged over
+representations.
 
 \section{Results}
 \label{sec:results}
@@ -575,7 +556,43 @@ Controls           & 3DINO, random weights    & 0.79 & 0.76 & 0.86 & 0.50 & 0.67
 }
 \end{table}
 
-\subsection{All representations encode the source dataset}
+\subsection{The sequence is encoded within every dataset but lost across datasets}
+\label{sec:transfer}
+
+Within a single dataset, every representation distinguishes the sequences
+reliably (0.84--0.97, Table~\ref{tab:main}), and the sequence is also
+decodable on the pooled corpus (0.72--0.95), where the probe sees every
+dataset during training. Yet a probe trained on 16 datasets largely fails on
+the seventeenth (Figure~\ref{fig:transfer}). For the baseline encoders and
+both brain-specific models, balanced accuracy falls to 0.44--0.55. The two
+broadly pretrained models, 3DINO and SAM-Med3D, keep more (0.72 and 0.69),
+but still lose 0.24--0.25 of their within-dataset accuracy, too much for a
+sequence classifier to be reliable on a new dataset without adaptation. Sex
+fails in the same way: across datasets, every representation stays between
+0.51 and 0.69 balanced accuracy against a chance level of 0.50
+(Table~\ref{tab:sex}).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/fm_transfer.pdf}
+\caption{Leave-one-dataset-out transfer of the imaging sequence. Balanced
+accuracy on each of the ten held-out datasets with more than one sequence
+(dots) and their mean (bar and number). Grey: baseline encoders; orange:
+brain-specific foundation models; blue: broadly pretrained medical foundation
+models; hatched: controls.}
+\label{fig:transfer}
+\end{figure}
+
+\subsection{Why transfer fails}
+\label{sec:why}
+
+Since the sequence is present in every dataset, the failure is not missing
+information. We test three explanations in turn: the features encode the
+source dataset, each dataset is shifted as a whole, or the directions that
+separate the classes differ between datasets. We then apply the same tests to
+sex.
+
+\subsubsection{Encoding the source dataset does not explain the failure}
 
 Every representation identifies the source dataset with a balanced accuracy
 of 0.84--0.95, against a chance level of 0.06 (Table~\ref{tab:main};
@@ -590,99 +607,24 @@ MRI~\cite{wachinger_detect_2021, glocker_machine_2019} and from natural
 images~\cite{torralba_unbiased_2011}, even with randomly initialized
 features~\cite{rahbar_frozen_2026}.
 
-\subsection{Sequence encoding is largely dataset-specific}
-\label{sec:transfer}
+Encoding the source dataset, however, does not go together with poor
+transfer (Figure~\ref{fig:identify}). 3DINO separates the source datasets
+best and also transfers the sequence best; the baseline encoders separate
+datasets almost as well but transfer far worse; and the random-weight ViT-L
+separates datasets least yet transfers poorly. Both kinds of information can
+coexist in the same features, in line with observations in
+mammography~\cite{nguyen_benchmarking_2026}, so dataset decodability is not
+the explanation.
 
-Within a single dataset, every representation distinguishes the sequences
-reliably (0.84--0.97), so the sequence information is clearly present; it is
-also decodable on the pooled corpus (0.72--0.95), where the probe sees every
-dataset during training. Yet a probe trained on 16 datasets largely fails on
-the seventeenth: for the baseline encoders and both brain-specific models,
-balanced accuracy falls to 0.44--0.55 (Figure~\ref{fig:transfer}). The
-features thus appear to describe a scan's contrast relative to its own
-dataset rather than in terms shared across datasets, and good performance on
-the training datasets says little about a new one. Pretraining on brain MRI
-does not change this: BrainIAC and BrainFM are not significantly more
-consistent than the Untrained CNN, which reflects the architecture alone
-($+0.01$, $p=0.85$; $+0.06$, $p=0.13$). Matching the pretraining domain to
-the target anatomy is therefore not sufficient.
-
-The two broadly pretrained models transfer better. 3DINO and SAM-Med3D reach
-0.72 and 0.69 on unseen datasets and exceed the Untrained CNN on every one of
-the ten ($+0.23$ and $+0.20$, $p=0.002$ each), so the gain is not driven by a
-few favourable datasets. Because two different objectives, self-distillation
-and promptable segmentation, reach a similar level ($p=0.24$), the breadth of
-the pretraining data likely matters more than the objective. Still, both lose
-0.24--0.25 of their within-dataset accuracy, too much for a sequence
-classifier to be reliable on a new dataset without adaptation. The gain is
-also specific to the sequence: for sex, available in ten datasets, 3DINO
-transfers no better than the other network representations (balanced
-accuracy 0.65, against 0.54--0.65) and SAM-Med3D only slightly better (0.69).
-Broad pretraining appears to align strong, global properties such as
-contrast across datasets, but not necessarily subtle anatomical ones.
-
-These results refine two earlier observations. Rahbar~\cite{rahbar_frozen_2026}
-found no reliable advantage of brain-pretrained or CT-pretrained SwinUNETR
-encoders over an untrained copy; our CT-pretrained SwinUNETR likewise does not
-beat the Untrained CNN, so pretraining as such is not enough, but broad
-pretraining is. Mielcarz et al.~\cite{mielcarz_3d_2026} found 3DINO the most
-stable, BrainFM intermediate and BrainIAC the most sensitive under simulated
-artifacts; the three models fall in the same order here under real shift
-between independent datasets.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.9\textwidth]{figures/fm_transfer.pdf}
-\caption{Leave-one-dataset-out transfer of the imaging sequence. Balanced
-accuracy on each of the ten held-out datasets with more than one sequence
-(dots) and their mean (bar and number). Grey: baseline encoders; orange:
-brain-specific foundation models; blue: broadly pretrained medical foundation
-models; hatched: controls.}
-\label{fig:transfer}
-\end{figure}
-
-\subsection{Controls}
-\label{sec:controls}
-
-Four controls rule out simpler explanations for these differences.
-First, the gain is not due to the architecture: the ViT-L of 3DINO with
-random weights reaches only 0.50, like the baseline encoders and
-significantly below the pretrained model ($p=0.01$), so the consistency is
-acquired during pretraining. Second, input normalization explains part of the
-gain but not all of it. Replacing 3DINO's percentile scaling with the shared
-$z$-score input lowers its transfer to 0.62 ($p=0.01$), and giving MedicalNet
-percentile scaling raises it from 0.44 to 0.60 ($p=0.03$); yet 3DINO with
-$z$-score input remains above the Untrained CNN ($+0.14$, $p=0.004$), and
-MedicalNet with percentile input remains below both broadly pretrained models
-($p\le0.03$). Third, the brain-specific models do not fail merely because
-half of the held-out datasets retain the skull: on the five skull-stripped
-multi-sequence datasets, where the input matches their pretraining, BrainIAC
-and BrainFM reach 0.55 and 0.64, against 0.81 for 3DINO and 0.75 for
-SAM-Med3D. Finally, the advantage is not an artifact of pretraining overlap.
-UPENN-GBM, OASIS-1 and OASIS-2 may be part of the pretraining data of 3DINO
-or SAM-Med3D; excluding UPENN-GBM, the only one of the three with more than
-one sequence, leaves both above the Untrained CNN ($+0.25$ and $+0.20$,
-$p=0.004$ each, $n=9$).
-
-\subsection{Dataset decodability does not predict transfer}
-
-A representation that separates datasets well might be expected to encode
-content inconsistently across them. Figure~\ref{fig:identify} does not
-support this expectation. 3DINO separates the source datasets best and also
-encodes the sequence most consistently; the baseline encoders separate
-datasets almost as well but encode the sequence far less consistently; and
-the random-weight ViT-L separates datasets least yet remains inconsistent.
-Strong encoding of the source dataset is therefore not, by itself, an
-indicator of poor content transfer: both kinds of information can coexist in
-the same features.
-
-The neighbourhood structure reflects the same difference. Averaged over the
-ten multi-sequence datasets, most representations have more neighbours from
-the same dataset than with the same sequence (e.g.\ MedicalNet 0.86 against
-0.77, BrainFM 0.88 against 0.77); locally, they are organized primarily by
-dataset. 3DINO is the only representation in which the same sequence is at
-least as common as the same dataset (0.89 against 0.87), despite separating
-datasets best.
+The neighbourhood structure reflects the same difference. This comparison of
+same-dataset and same-sequence neighbours follows the robustness index of
+PathoROB~\cite{komen_towards_2025}, which compares same-centre and
+same-biology neighbours in pathology. Averaged over the ten multi-sequence
+datasets, most representations have more neighbours from the same dataset
+than with the same sequence (e.g.\ MedicalNet 0.86 against 0.77, BrainFM 0.88
+against 0.77); locally, they are organized primarily by dataset. 3DINO is the
+only representation in which the same sequence is at least as common as the
+same dataset (0.89 against 0.87), despite separating datasets best.
 
 \begin{figure}[t]
 \centering
@@ -695,41 +637,51 @@ models; open circle: 3DINO with random weights.}
 \label{fig:identify}
 \end{figure}
 
-\subsection{Transfer follows the consistency of sequence directions}
+\subsubsection{The failure is not a shift of each dataset}
+
+If each dataset were displaced as a whole in feature space, removing each
+dataset's mean would recover transfer. It does not
+(Figure~\ref{fig:consistency}b). Neither centring test changes sequence
+transfer significantly for any representation ($p\ge0.16$); most
+representations lose slightly, and 3DINO gains 0.06 without reaching
+significance. Label-free and class-balanced centring agree to within 0.01,
+so the different mix of sequences in each dataset is not the cause either.
+
+\subsubsection{The failure is a disagreement of sequence directions}
 \label{sec:consistency}
 
-Sequence-direction consistency explains much of what decodability does not.
-Across all representations and held-out datasets, a held-out dataset whose
-sequence offsets agree with those of the training datasets is one to which
-the sequence transfers (Spearman $\rho=0.60$, $p<10^{-10}$, $n=110$;
-Figure~\ref{fig:consistency}a). The relation also holds within
+Direction consistency tracks transfer. Across all representations and held-out datasets, a held-out
+dataset whose sequence offsets agree with those of the training datasets is
+one to which the sequence transfers (Spearman $\rho=0.60$, $p<10^{-10}$,
+$n=110$; Figure~\ref{fig:consistency}a). The relation also holds within
 representations, positive for 10 of 11 with a mean $\rho$ of 0.57, so it
 identifies which datasets a given representation fails on and is not only a
 difference between representations. The baseline encoders have the least
-consistent directions (0.11--0.21), BrainFM is intermediate (0.30), and
-3DINO and SAM-Med3D reach 0.45 and 0.48. The input-scaling controls move
+consistent directions (0.11--0.21), BrainFM reaches 0.30, and 3DINO and
+SAM-Med3D reach 0.45 and 0.48; BrainIAC (0.46) is discussed below. The input-scaling controls move
 consistency and transfer together: percentile scaling raises MedicalNet's
-consistency from 0.21 to 0.37, and $z$-score input lowers 3DINO's from 0.45 to
-0.34.
+consistency from 0.21 to 0.37, and $z$-score input lowers 3DINO's from 0.45
+to 0.34.
 
-Measured on the training datasets alone, the pool consistency ranks the 11
-representations and controls by their transfer to unseen datasets
-($\rho=0.69$, $p=0.02$), without any data from the target. It is a necessary
-rather than a sufficient condition: BrainIAC (0.45) and 3DINO with random
-weights (0.41) have consistent directions yet transfer poorly. Both also have
-among the lowest within-dataset sequence accuracies (0.84 and 0.86,
-Table~\ref{tab:main}): their sequence offsets point the same way across
-datasets but are small relative to the spread within each sequence.
+Because this score uses the held-out labels, part of this relation is
+expected by construction. Two versions without them show it is more than
+that. Measured on the training datasets alone, the pool consistency ranks the 11 representations and controls by their transfer to
+unseen datasets ($\rho=0.69$, $p=0.02$), without any data from the target.
+Computed from clusters of the unlabelled held-out dataset, it ranks the
+held-out datasets of a representation by transfer with a mean $\rho$ of 0.37,
+better than average confidence in 10 of 11 representations and than ATC in all
+11, which barely track transfer within a representation ($\rho=0.03$ and 0.01;
+Appendix Table~\ref{tab:failure}). It works best where the sequences form
+clear clusters, as for 3DINO and SAM-Med3D ($\rho=0.79$ and 0.92), whereas
+confidence remains the better way to compare whole representations ($\rho=0.91$
+against 0.11).
 
-Neither centring test improves transfer (Figure~\ref{fig:consistency}b). No
-change is significant for any representation ($p\ge0.16$), most
-representations lose slightly, 3DINO gains 0.06 without reaching
-significance, and label-free and class-balanced centring
-agree to within 0.01 for every representation. Each dataset being displaced
-as a whole is therefore not the main cause of failure, and neither is the
-different mix of sequences in each dataset. What remains is a disagreement of
-directions, which no per-dataset translation can repair and which, as
-Section~\ref{sec:removal} shows, removal methods do not repair either.
+Consistency is a necessary rather than a sufficient condition: BrainIAC
+(0.46) and 3DINO with random weights (0.44) have consistent directions yet
+transfer poorly. Both also have among the lowest within-dataset sequence
+accuracies (0.84 and 0.86, Table~\ref{tab:main}): their sequence offsets
+point the same way across datasets but are small relative to the spread
+within each sequence.
 
 \begin{figure}[t]
 \centering
@@ -744,30 +696,23 @@ broadly pretrained medical foundation models.}
 \label{fig:consistency}
 \end{figure}
 
-\subsection{Consistency also explains sex transfer, where part of the failure is a shift}
+\subsubsection{Sex: directions disagree, and part of the failure is a shift}
 \label{sec:sex}
 
-Sex is a subtler target: across datasets, every representation stays between
-0.51 and 0.69 balanced accuracy against a chance level of 0.50
-(Table~\ref{tab:sex}), and only SAM-Med3D is slightly ahead of the other
-network representations (0.69, against 0.54--0.65). Direction consistency again explains which held-out datasets
-fail, more weakly than for the sequence (Spearman $\rho=0.42$,
-$p<10^{-5}$, $n=110$; positive within 10 of 11 representations, mean
-$\rho=0.33$), and the mean consistency of a representation tracks its mean
-transfer ($\rho=0.71$, $p=0.015$, $n=11$). The pool consistency, computed
-without the target, points the same way but is not significant here
-($\rho=0.59$, $p=0.06$).
+Direction consistency again explains which held-out datasets fail,
+more weakly than for the sequence (Spearman $\rho=0.42$, $p<10^{-5}$,
+$n=110$; positive within 10 of 11 representations, mean $\rho=0.33$), and the
+mean consistency of a representation tracks its mean transfer ($\rho=0.71$,
+$p=0.015$, $n=11$). The pool consistency, computed without the target,
+points the same way but is not significant here ($\rho=0.59$, $p=0.06$).
 
-Unlike for the sequence, centring helps in part. Label-free centring raises the
-sex transfer of the Handcrafted statistics from 0.51 to 0.61 ($p=0.004$) and
-moves MedicalNet and BrainFM up by 0.03--0.06 without reaching significance,
-whereas it changes the broadly pretrained models by at most 0.02. For these
-representations part of the failure is therefore a shift of each dataset as a
-whole, which per-dataset alignment can repair. Accordingly, CORAL, which
-includes this centring, raises the Handcrafted statistics to 0.65 ($p=0.002$);
-LEACE never helps and lowers MedicalNet ($p=0.04$). Whether removing the
-dataset signal can help is thus label-dependent, and the centring test, which
-needs no target labels, shows in advance where it might.
+Unlike for the sequence, centring helps in part. Label-free centring raises
+the sex transfer of the Handcrafted statistics from 0.51 to 0.61 ($p=0.004$)
+and moves MedicalNet and BrainFM up by 0.03--0.06 without reaching
+significance, whereas it changes the broadly pretrained models by at most
+0.02 (Table~\ref{tab:sex}). For these representations part of the failure is
+therefore a shift of each dataset as a whole, which the centring test
+separates from a disagreement of directions.
 
 \begin{table}[t]
 \centering
@@ -796,87 +741,57 @@ SAM-Med3D     & 0.60 & 0.69 & 0.69 & 0.68 (0.66) & 0.68 (0.61) \\
 \end{tabular}
 \end{table}
 
-\subsection{Predicting failure on an unlabelled dataset}
-\label{sec:failure}
-
-Standard label-free estimators of accuracy under distribution shift do not
-work across independent datasets (Table~\ref{tab:failure}). Within a
-representation, neither the average confidence of the probe nor ATC tells
-which held-out datasets the probe will fail on (mean Spearman $\rho=0.03$ and
-$0.01$), and ATC misestimates the balanced accuracy by 0.25 on average.
-Consistency computed from clusters of the unlabelled held-out dataset does
-better: it ranks the held-out datasets more correctly than average confidence
-in 10 of 11 representations ($p=0.002$) and than ATC in all 11 ($p=0.001$),
-with a mean $\rho$ of 0.37. It works best where the sequences form clear
-clusters, as for 3DINO and SAM-Med3D ($\rho=0.79$ and $0.92$), and poorly for
-several baseline encoders. Confidence, in turn, is the better way to rank
-whole representations ($\rho=0.91$ against 0.11), so the two answer different
-questions: confidence compares encoders, while cluster consistency warns which
-new datasets a chosen encoder will fail on.
-
-\begin{table}[t]
-\centering
-\small
-\caption{Label-free prediction of sequence transfer to a held-out dataset.
-Spearman correlation between each score and the measured balanced accuracy,
-across the ten held-out datasets within each representation (mean over 11
-representations and controls), across all 110 representation--dataset pairs,
-and across the 11 representation means.}
-\label{tab:failure}
-\begin{tabular}{l c c c}
-\toprule
-\textbf{Score} & \textbf{Within representation} & \textbf{Pooled} & \textbf{Across representations} \\
-\midrule
-Average confidence~\cite{hendrycks_baseline_2017} & 0.03 & 0.26 & \textbf{0.91} \\
-ATC~\cite{garg_leveraging_2022}                   & 0.01 & 0.12 & 0.68 \\
-Cluster consistency (ours)                        & \textbf{0.37} & \textbf{0.27} & 0.11 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsection{Removing the dataset signal does not improve sequence transfer}
+\subsection{Why removing the dataset signal does not help}
 \label{sec:removal}
 
-The removal methods succeed at what they are designed to do. For the seven
-network representations, LEACE lowers dataset decodability inside the
-training datasets from 0.84--0.95 to 0.03--0.26 and CORAL to at most 0.11,
-while INLP (0.67--0.91) and the adversarial network (0.72--0.90) remove less
-(Appendix Table~\ref{tab:removal_decode}). Yet removing the dataset signal
-does not make the sequence transfer better (Table~\ref{tab:removal}). None of
-the 32 method--representation combinations improves transfer significantly;
-almost all lower it, and seven do so significantly, mostly after LEACE and the
-adversarial network. The single-sequence datasets show the same pattern, with
-every method lowering accuracy for every network representation. Removing the
-dataset directions is also no better than removing random ones: for no
-network representation do INLP or LEACE significantly beat their
-random-projection controls, and CORAL, although better than aligning to a
-wrong dataset, still lowers transfer. This extends the observation that INLP
-and ComBat bring no significant gain on held-out sites of one
-study~\cite{rahbar_frozen_2026} to independent datasets, two further methods,
-matched controls for each method and eight representations.
+The removal methods succeed at what
+they are designed to do. For the seven network representations, LEACE lowers
+dataset decodability inside the training datasets from 0.84--0.95 to
+0.03--0.26 and CORAL to at most 0.11, while INLP (0.67--0.91) and the
+adversarial network (0.72--0.90) remove less (Appendix
+Table~\ref{tab:removal_decode}). Yet none of the 32 method--representation
+combinations improves sequence transfer significantly
+(Table~\ref{tab:removal}); almost all lower it, and seven do so
+significantly, mostly after LEACE and the adversarial network. The
+single-sequence datasets show the same pattern, with every method lowering
+accuracy for every network representation. Removing the dataset directions is
+also no better than removing random ones: for no network representation do
+INLP or LEACE significantly beat their random-projection controls, and CORAL,
+although better than aligning to a wrong dataset, still lowers transfer.
+This extends the observation that INLP and ComBat bring no significant gain
+on held-out sites of one study~\cite{rahbar_frozen_2026} to independent
+datasets, two further methods, matched controls for each method and eight
+representations. It also rules out the explanation offered there, that the
+encoder output carried too little clinical information to begin with: here
+the sequence is strongly encoded, and removal still fails.
 
 The reason is that the dataset and the sequence are not stored separately.
-Removing the dataset signal also removes sequence information: inside the
-training datasets, sequence decodability falls by 0.14--0.24 after LEACE and
-by 0.26--0.28 after CORAL for every network representation. The directions
-that tell datasets apart are largely the directions that carry the sequence,
-as the inconsistent sequence directions found in Section~\ref{sec:consistency}
-suggest, so the methods tested cannot take out one without the other. The
-centring tests also explain why CORAL fails: aligning the first two moments
-of each dataset cannot rotate inconsistent sequence directions into
-agreement. 3DINO
-is a partial exception: there, INLP removes 16 directions on average, against
-3--9 for the other representations, lowering dataset decodability from 0.95
-to 0.67 while sequence decodability falls only from 0.95 to 0.90. The
-features that encode the sequence most consistently are thus also those in
-which the dataset signal is most separable from it.
+When the difference between sequences is itself different in each dataset,
+the directions that tell datasets apart include these per-dataset sequence
+differences. Removing the dataset signal therefore also removes sequence
+information: inside the training datasets, sequence decodability falls by
+0.14--0.24 after LEACE and by 0.26--0.28 after CORAL for every network
+representation. This loss is specific to the dataset directions: removing 15
+random directions, the LEACE control, costs only 0.01--0.05, and the
+difference holds for every representation ($p<0.001$, paired over the 17
+splits; Appendix Table~\ref{tab:removal_decode}). Alignment fails for the reason found in the centring tests:
+matching the first two moments of each dataset cannot rotate inconsistent
+sequence directions into agreement. 3DINO is a partial exception: there,
+INLP removes 16 directions on average, against 3--9 for the other
+representations, lowering dataset decodability from 0.95 to 0.67 while
+sequence decodability falls only from 0.95 to 0.90. The features that encode
+the sequence most consistently are thus also those in which the dataset
+signal is most separable from it. After any correction, no representation
+other than 3DINO and SAM-Med3D exceeds 0.57, whereas the uncorrected 3DINO
+features reach 0.72: how consistently the sequence is encoded is set when the
+features are learned.
 
-After any correction, no representation other than 3DINO and SAM-Med3D
-exceeds 0.57, whereas the uncorrected 3DINO features reach 0.72: how
-consistently the sequence is encoded is set when the features are learned.
-For sex, where centring shows that part of the failure is a shift, alignment
-can help (Section~\ref{sec:sex}), which confirms that it is the disagreement
-of directions that makes removal fail for the sequence.
+For sex, where part of the failure is a shift (Section~\ref{sec:sex}),
+alignment can help. CORAL, which includes the per-dataset centring, raises
+the Handcrafted statistics from 0.51 to 0.65 ($p=0.002$), while LEACE never
+helps and lowers MedicalNet ($p=0.04$; Table~\ref{tab:sex}). Alignment thus
+helps where the failure is a shift but not where directions disagree, and the
+centring test tells the two apart.
 
 \begin{table}[t]
 \centering
@@ -894,8 +809,8 @@ test over the ten datasets.}
 \textbf{Representation} & \textbf{Before} & \textbf{INLP} & \textbf{LEACE} & \textbf{CORAL} & \textbf{Adversarial} \\
 \midrule
 Handcrafted   & 0.44 & 0.41 (0.44) & 0.42 (0.40) & 0.37 (0.27) & 0.42 (0.43) \\
-Untrained CNN & 0.49 & 0.48 (0.47) & 0.41$^{*}$ (0.45) & 0.42 (0.28) & 0.45 (0.44) \\
-MedicalNet    & 0.44 & 0.44 (0.44) & 0.43 (0.43) & 0.42 (0.27) & 0.40 (0.45) \\
+Untrained CNN & 0.49 & 0.48 (0.47) & 0.41$^{*}$ (0.44) & 0.42 (0.28) & 0.45 (0.44) \\
+MedicalNet    & 0.44 & 0.44 (0.44) & 0.43 (0.42) & 0.42 (0.27) & 0.40 (0.45) \\
 SwinUNETR     & 0.47 & 0.41$^{*}$ (0.45) & 0.44 (0.40) & 0.45 (0.30) & 0.36 (0.41) \\
 \midrule
 BrainIAC      & 0.50 & 0.48 (0.50) & 0.44$^{*}$ (0.48) & 0.43 (0.25) & 0.40$^{*}$ (0.45) \\
@@ -907,34 +822,92 @@ SAM-Med3D     & 0.69 & 0.67 (0.68) & 0.63 (0.64) & 0.57$^{*}$ (0.31) & 0.54$^{*}
 \end{tabular}
 \end{table}
 
+\subsection{Which representations encode the sequence consistently}
+\label{sec:models}
+
+The two broadly pretrained models are the only ones with sequence directions
+consistent enough to transfer. 3DINO and SAM-Med3D exceed the Untrained CNN,
+which reflects the architecture alone, on every one of the ten held-out
+datasets ($+0.23$ and $+0.20$, $p=0.002$ each), so the gain is not driven by
+a few favourable datasets. Pretraining on brain MRI does not have this
+effect: BrainIAC and BrainFM do not transfer significantly better than the
+Untrained CNN ($+0.01$, $p=0.85$; $+0.06$, $p=0.13$), so matching the
+pretraining domain to the target anatomy is not sufficient. Because two
+different objectives, self-distillation and promptable segmentation, reach a
+similar level ($p=0.24$), the breadth of the pretraining data likely matters
+more than the objective. The gain is specific to the sequence: for sex, 3DINO
+transfers no better than the other network representations (0.65, against
+0.54--0.65) and SAM-Med3D only slightly better (0.69). Broad pretraining
+appears to align strong, global properties such as contrast across datasets,
+but not necessarily subtle anatomical ones.
+
+These results refine two earlier observations. Rahbar~\cite{rahbar_frozen_2026}
+found no reliable advantage of brain-pretrained or CT-pretrained SwinUNETR
+encoders over an untrained copy; our CT-pretrained SwinUNETR likewise does not
+beat the Untrained CNN, so pretraining as such is not enough, but broad
+pretraining is. Mielcarz et al.~\cite{mielcarz_3d_2026} found 3DINO the most
+stable, BrainFM intermediate and BrainIAC the most sensitive under simulated
+artifacts; the three models fall in the same order here under real shift
+between independent datasets.
+
+\paragraph{Controls.}
+\label{sec:controls}
+Four controls rule out simpler explanations for these differences.
+First, the gain is not due to the architecture: the ViT-L of 3DINO with
+random weights reaches only 0.50, like the baseline encoders and
+significantly below the pretrained model ($p=0.01$), so the consistency is
+acquired during pretraining. Second, input normalization explains part of the
+gain but not all of it. Replacing 3DINO's percentile scaling with the shared
+$z$-score input lowers its transfer to 0.62 ($p=0.01$), and giving MedicalNet
+percentile scaling raises it from 0.44 to 0.60 ($p=0.03$); yet 3DINO with
+$z$-score input remains above the Untrained CNN ($+0.14$, $p=0.004$), and
+MedicalNet with percentile input remains below both broadly pretrained models
+($p\le0.03$). Third, the brain-specific models do not fail merely because
+half of the held-out datasets retain the skull: on the five skull-stripped
+multi-sequence datasets, where the input matches their pretraining, BrainIAC
+and BrainFM reach 0.55 and 0.64, against 0.81 for 3DINO and 0.75 for
+SAM-Med3D. Finally, the advantage is not an artifact of pretraining overlap.
+UPENN-GBM, OASIS-1 and OASIS-2 may be part of the pretraining data of 3DINO
+or SAM-Med3D; excluding UPENN-GBM, the only one of the three with more than
+one sequence, leaves both above the Untrained CNN ($+0.25$ and $+0.20$,
+$p=0.004$ each, $n=9$).
+
 \section{Discussion}
 
-\paragraph{Telling datasets apart is not the problem.}
-Every representation tested, from handcrafted statistics to current
-foundation models, identifies the source dataset, and much of this requires
-no learning at all. Dataset decodability is therefore a poor diagnostic of
-whether a representation is fit for pooling. The question that matters is
-whether content is encoded in the same way across datasets, and this must be
-measured on held-out datasets rather than inferred from within-dataset or
-pooled accuracy, which were high for every representation.
+\paragraph{Why frozen features fail across datasets.}
+Every representation tested identifies the source dataset and recognizes the
+sequence within each dataset, yet neither predicts transfer. The failure is
+not missing information, dataset encoding or a shift of each dataset; the
+directions that separate the classes differ between datasets. Dataset
+decodability and within-dataset or pooled accuracy are therefore poor guides
+to whether a representation is fit for pooling, and consistency must be
+measured on held-out datasets. The same account explains why removal fails:
+the directions that tell datasets apart include the per-dataset sequence
+differences, so erasing or aligning the dataset signal removes content too.
+This agrees with the observation that removing a site subspace can harm
+segmentation because site and anatomy share
+directions~\cite{rahbar_frozen_2026}. Correction has succeeded where \emph{paired}
+scans of the same subjects are available~\cite{donle_featmap_2026}, but public
+datasets are independent populations with only a dataset label; there,
+adapting the encoder with labelled target data remains the practical option.
 
 \paragraph{Direction consistency as a diagnostic.}
-Direction consistency turns this requirement into a quantity computed from
-class means alone, and it supports three practical checks. Before deployment,
-the pool consistency of the training datasets indicates which representation
+Direction consistency is computed from class means alone and supports three
+practical checks. Before deployment, the
+pool consistency of the training datasets indicates which representation
 will transfer, significantly for the sequence and in the same direction for
 sex. On a new unlabelled dataset, cluster consistency warns which datasets a
 chosen encoder will fail on, a task on which standard confidence-based
 estimators~\cite{hendrycks_baseline_2017, garg_leveraging_2022} fail under
-this kind of shift. And the centring test shows whether aligning datasets
-afterwards is worth trying at all. If a few target labels are available, the
+this kind of shift. And the centring test, run on labelled datasets, shows
+whether aligning datasets afterwards is worth trying at all. If a few target labels are available, the
 probe's accuracy on them is the more direct check. Consistency is necessary
 rather than sufficient, since the class offsets must also be large relative
 to the spread within each class, and the label-free variant is modest in
 absolute terms; a score that combines direction and separation is a natural
 next step.
 
-\paragraph{Breadth of pretraining, not domain match.}
+\paragraph{Which features transfer: breadth of pretraining, not domain match.}
 The two models pretrained on broad multi-organ CT and MRI collections encode
 the sequence consistently; the two brain-specific models, pretrained on the
 target anatomy, do not do significantly better than a network with random
@@ -954,25 +927,6 @@ supervised with acquisition or anatomical
 metadata~\cite{navarro-gonzalez_cross-scanner_2026, avci_metadata_2026} are a
 natural next comparison. The advantage was small for sex, a subtler
 property: only SAM-Med3D was slightly ahead.
-
-\paragraph{Post-hoc correction cannot substitute for better features.}
-In the representations tested, the dataset and the sequence share feature
-directions, so erasing or aligning the dataset signal also removes the
-content it is meant to protect. This agrees with the observation that removing
-a site subspace can harm segmentation because site and anatomy share
-directions~\cite{rahbar_frozen_2026}. Rahbar found no gain on held-out sites
-where the clinical targets were weakly encoded to begin with; here the
-sequence is strongly encoded within every dataset, and removal still does not
-help. Our consistency analysis explains this second case: the problem is the
-disagreement of the content directions themselves, which no removal or
-alignment of the dataset signal can rotate into agreement. Where the failure is partly a shift, as for sex in the
-Handcrafted statistics, alignment does help, so the outcome of removal
-depends on the label and can be anticipated with the centring test.
-Correction has succeeded where \emph{paired} scans of the same subjects under
-different acquisitions are available~\cite{donle_featmap_2026}, but public
-datasets are independent populations with only a dataset label. In that
-setting, adapting the encoder with labelled target data remains the practical
-option when frozen features do not transfer well enough.
 
 \paragraph{Limitations.}
 The sequence is the only content label shared by all 17 datasets; it is a
@@ -996,21 +950,20 @@ overlap control can only exclude datasets known or likely to be included.
 
 \section{Conclusion}
 
-Across 17 public brain MRI datasets, every frozen representation encodes the
-source dataset, but only two broadly pretrained medical foundation models
-encode the imaging sequence consistently enough to transfer to an unseen
-dataset; brain-specific pretraining did not achieve this. Transfer follows
-whether the directions that separate the classes agree across datasets, for
-the sequence and for sex. This direction consistency ranks representations
-from the training datasets alone, and, computed on an unlabelled new dataset,
-warns of failure better than confidence-based estimators. Four standard
-methods for removing the dataset signal after extraction erased it without
-improving sequence transfer, because dataset and sequence share feature
-directions; alignment helped only where a centring test showed that the
-failure was a shift.
-For anyone pooling public data, consistency across datasets should be treated
-as a property of how features are learned and verified on held-out datasets,
-not something to be corrected afterwards.
+Across 17 public brain MRI datasets, frozen features fail on new datasets
+not because the content is missing, nor because they encode the source
+dataset or because each dataset is shifted, but because the directions that
+separate the classes differ between datasets. This direction consistency
+tracks transfer for the sequence and for sex, ranks representations from the training datasets alone
+and, computed on an unlabelled new dataset, warns of failure better than
+confidence-based estimators. The same account explains why four standard
+methods for removing the dataset signal erased it without improving sequence
+transfer, and why alignment helped only where a centring test showed that the
+failure was a shift. Only two broadly pretrained medical foundation models
+encoded the sequence consistently enough to transfer; brain-specific
+pretraining did not. For anyone pooling public data, consistency across
+datasets should be treated as a property of how features are learned and
+verified on held-out datasets, not something to be corrected afterwards.
 
 
 \section*{Code and Data Availability}
@@ -1036,27 +989,51 @@ code from the listed scans.
 \caption{Dataset and sequence decodability inside the training datasets,
 before and after each removal method, averaged over the
 leave-one-dataset-out splits (balanced accuracy). Chance: 0.06 for the
-dataset and 0.25 for the sequence. Adv.: adversarial.}
+dataset and 0.25 for the sequence. Adv.: adversarial. Rand.: removing 15
+random directions, the control for LEACE.}
 \label{tab:removal_decode}
 \resizebox{\textwidth}{!}{%
-\begin{tabular}{l cc cccc cccc}
+\begin{tabular}{l cc cccc ccccc}
 \toprule
- & \multicolumn{2}{c}{\textbf{Before}} & \multicolumn{4}{c}{\textbf{Dataset after}} & \multicolumn{4}{c}{\textbf{Sequence after}} \\
-\cmidrule(lr){2-3}\cmidrule(lr){4-7}\cmidrule(lr){8-11}
-\textbf{Representation} & Dataset & Seq. & INLP & LEACE & CORAL & Adv. & INLP & LEACE & CORAL & Adv. \\
+ & \multicolumn{2}{c}{\textbf{Before}} & \multicolumn{4}{c}{\textbf{Dataset after}} & \multicolumn{5}{c}{\textbf{Sequence after}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-7}\cmidrule(lr){8-12}
+\textbf{Representation} & Dataset & Seq. & INLP & LEACE & CORAL & Adv. & INLP & LEACE & Rand. & CORAL & Adv. \\
 \midrule
-Handcrafted   & 0.92 & 0.73 & 0.88 & 0.84 & 0.14 & 0.88 & 0.68 & 0.56 & 0.54 & 0.71 \\
-Untrained CNN & 0.94 & 0.88 & 0.89 & 0.26 & 0.11 & 0.90 & 0.83 & 0.71 & 0.62 & 0.78 \\
-MedicalNet    & 0.94 & 0.86 & 0.91 & 0.10 & 0.02 & 0.87 & 0.80 & 0.67 & 0.58 & 0.70 \\
-SwinUNETR     & 0.91 & 0.83 & 0.87 & 0.10 & 0.03 & 0.85 & 0.78 & 0.59 & 0.56 & 0.69 \\
+Handcrafted   & 0.92 & 0.73 & 0.88 & 0.84 & 0.14 & 0.88 & 0.68 & 0.56 & 0.67 & 0.54 & 0.71 \\
+Untrained CNN & 0.94 & 0.88 & 0.89 & 0.26 & 0.11 & 0.90 & 0.83 & 0.71 & 0.87 & 0.62 & 0.78 \\
+MedicalNet    & 0.94 & 0.86 & 0.91 & 0.10 & 0.02 & 0.87 & 0.80 & 0.67 & 0.81 & 0.58 & 0.70 \\
+SwinUNETR     & 0.91 & 0.83 & 0.87 & 0.10 & 0.03 & 0.85 & 0.78 & 0.59 & 0.79 & 0.56 & 0.69 \\
 \midrule
-BrainIAC      & 0.84 & 0.76 & 0.75 & 0.03 & 0.01 & 0.72 & 0.71 & 0.57 & 0.49 & 0.59 \\
-BrainFM       & 0.93 & 0.89 & 0.90 & 0.23 & 0.07 & 0.90 & 0.84 & 0.68 & 0.62 & 0.80 \\
+BrainIAC      & 0.84 & 0.76 & 0.75 & 0.03 & 0.01 & 0.72 & 0.71 & 0.57 & 0.72 & 0.49 & 0.59 \\
+BrainFM       & 0.93 & 0.89 & 0.90 & 0.23 & 0.07 & 0.90 & 0.84 & 0.68 & 0.88 & 0.62 & 0.80 \\
 \midrule
-3DINO         & 0.95 & 0.95 & 0.67 & 0.10 & 0.01 & 0.86 & 0.90 & 0.81 & 0.69 & 0.74 \\
-SAM-Med3D     & 0.93 & 0.92 & 0.87 & 0.05 & 0.01 & 0.84 & 0.87 & 0.74 & 0.64 & 0.75 \\
+3DINO         & 0.95 & 0.95 & 0.67 & 0.10 & 0.01 & 0.86 & 0.90 & 0.81 & 0.94 & 0.69 & 0.74 \\
+SAM-Med3D     & 0.93 & 0.92 & 0.87 & 0.05 & 0.01 & 0.84 & 0.87 & 0.74 & 0.88 & 0.64 & 0.75 \\
 \bottomrule
 \end{tabular}}
+\end{table}
+
+\section{Label-Free Prediction of Transfer}
+
+\begin{table}[H]
+\centering
+\small
+\caption{Label-free prediction of sequence transfer to a held-out dataset.
+Spearman correlation between each score and the measured balanced accuracy,
+across the ten held-out datasets within each representation (mean over 11
+representations and controls), across all 110 representation--dataset pairs,
+and across the 11 representation means. ATC also misestimates the balanced
+accuracy by 0.25 on average.}
+\label{tab:failure}
+\begin{tabular}{l c c c}
+\toprule
+\textbf{Score} & \textbf{Within representation} & \textbf{Pooled} & \textbf{Across representations} \\
+\midrule
+Average confidence~\cite{hendrycks_baseline_2017} & 0.03 & 0.26 & \textbf{0.91} \\
+ATC~\cite{garg_leveraging_2022}                   & 0.01 & 0.11 & 0.68 \\
+Cluster consistency (ours)                        & \textbf{0.37} & \textbf{0.27} & 0.11 \\
+\bottomrule
+\end{tabular}
 \end{table}
 
 \end{document}
