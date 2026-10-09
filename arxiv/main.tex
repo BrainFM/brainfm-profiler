@@ -35,8 +35,10 @@
 \begin{abstract}
 Brain MRI foundation models are pretrained and evaluated on pools of public
 datasets, each an independent study with its own disease, cohort, scanner and
-preprocessing. Whether frozen features encode content in the same way across
-such datasets has not been tested. We evaluate eight frozen representations,
+preprocessing. Frozen features of medical foundation models are known to
+retain where a scan came from and to lose accuracy on new datasets, but why
+they fail, and whether the failure can be anticipated and corrected, remains
+unclear. We evaluate eight frozen representations,
 from handcrafted statistics and an untrained network to brain-specific and
 broadly pretrained foundation models, on 4{,}167 volumes from 17 public
 datasets, by predicting the MRI sequence on a dataset held out from training.
@@ -52,7 +54,8 @@ identifies failing datasets better than confidence-based accuracy estimators,
 which fail on this shift. Third, four methods for removing the dataset signal,
 each with a matched control, never improve sequence transfer, because dataset
 and sequence share directions; alignment helps only where a centring test
-shows that the failure is a shift. Code and embeddings are released.
+shows that the failure is a shift. Code is available at
+\url{https://github.com/BrainFM/brainfm-profiler}.
 \end{abstract}
 
 \section{Introduction}
@@ -77,19 +80,24 @@ MRI~\cite{wachinger_detect_2021, glocker_machine_2019}, and recent negative
 controls show that this signal is already present in randomly initialized
 encoders and in the raw image~\cite{rahbar_frozen_2026}, with the same pattern
 in EEG and fMRI foundation models~\cite{zare_negative-control_2026,
-tao_batch_2026}. What remains open is whether this matters for what a frozen
-representation carries to a \emph{new} dataset. A representation can encode
-dataset identity and still transfer content, provided the content is encoded
-in the same way across datasets. Existing tests do not answer this for the
-setting in which public data are actually pooled. They move between sites of
-a single study~\cite{rahbar_frozen_2026} or between scanners imaging the same
-subjects~\cite{navarro-gonzalez_cross-scanner_2026}, or they apply simulated
-artifacts~\cite{mielcarz_3d_2026}. In the only test of pretrained models
-against an untrained control, pretraining gave no reliable
-advantage~\cite{rahbar_frozen_2026}, but only models of one architecture
-family were tested. Removing the site signal after extraction did not help on
-held-out sites~\cite{rahbar_frozen_2026}, but why it fails, and whether this
-holds for other removal methods and for independent datasets, has not been
+tao_batch_2026}. Frozen medical foundation models also lose accuracy on
+datasets and centres not seen in training, as shown for
+mammography~\cite{germani_multi-institutional_2026, nguyen_benchmarking_2026}
+and pathology~\cite{de_jong_current_2025, komen_towards_2025}. That frozen
+features fail across datasets is therefore known; why they fail is not.
+A representation can encode dataset identity and still transfer content,
+provided the content is encoded in the same way across datasets, so dataset
+identity alone does not explain the failure. For brain MRI, existing tests
+also do not cover the setting in which public data are actually pooled. They
+move between sites of a single study~\cite{rahbar_frozen_2026} or between
+scanners imaging the same subjects~\cite{navarro-gonzalez_cross-scanner_2026},
+or they apply simulated artifacts~\cite{mielcarz_3d_2026}. In the only brain
+MRI test of pretrained models against an untrained control, pretraining gave
+no reliable advantage~\cite{rahbar_frozen_2026}, but only models of one
+architecture family were tested. Removing the site signal after extraction
+did not help on held-out sites~\cite{rahbar_frozen_2026}, but whether this
+holds for other removal methods and for independent datasets, and what
+prevents it from working when the content is clearly encoded, has not been
 measured.
 
 We address these questions with frozen representations, the way foundation
@@ -99,14 +107,14 @@ on the frozen features of all datasets but one is evaluated on the held-out
 dataset. The probe predicts the MRI sequence (T1, T1c, T2 or FLAIR), the only
 content label available for every scan in all 17 datasets; disease labels
 barely overlap between datasets and are confounded with dataset identity. Sex,
-available in ten datasets, serves as a second, anatomical label. To
-our knowledge, this is the first controlled evaluation of frozen brain MRI
-representations across many independent public datasets. Our contributions
-are:
+available in ten datasets, serves as a second, anatomical label. Because the sequence is easily
+recognized within every dataset, a failure to transfer it cannot be blamed
+on missing information, which lets us study why transfer fails rather than
+only whether it does. Our contributions are:
 
 \begin{itemize}
-  \item \textbf{Broad pretraining, not brain-specific pretraining, yields
-  content that transfers across datasets.} Every representation recognizes
+  \item \textbf{In our comparison, broad pretraining, not brain-specific
+  pretraining, yields content that transfers across datasets.} Every representation recognizes
   the sequence within a dataset, but only 3DINO and SAM-Med3D, pretrained on
   large multi-organ CT and MRI collections, keep it on unseen datasets; two
   brain-specific foundation models do no better than an untrained network.
@@ -128,8 +136,8 @@ are:
   The idea follows work linking cross-lingual alignment to zero-shot
   transfer~\cite{muller_first_2021, deshpande_when_2022}; we use it as a
   diagnostic for frozen medical encoders.
-  \item \textbf{The most complete test so far of post-hoc dataset-signal
-  removal.} Four methods (INLP, LEACE, CORAL and adversarial training), each
+  \item \textbf{An explanation of why post-hoc dataset-signal removal does
+  not help.} Four methods (INLP, LEACE, CORAL and adversarial training), each
   with a matched control, are fitted inside every leave-one-dataset-out split
   for all eight representations. None improves sequence transfer, extending
   the held-out-site result for INLP and ComBat~\cite{rahbar_frozen_2026}, and
@@ -140,8 +148,9 @@ are:
 \end{itemize}
 
 \noindent We also show that strong dataset decodability does not by itself
-indicate poor transfer, and we release the code, the per-scan acquisition
-descriptors used in the probes, and frozen embeddings for all representations.
+indicate poor transfer, in line with observations in
+mammography~\cite{nguyen_benchmarking_2026}, and we release the code, the
+list of sampled scans and the result tables.
 
 \section{Related Work}
 
@@ -156,17 +165,42 @@ hospitals~\cite{zech_variable_2018, geirhos_shortcut_2020}. Most closely
 related, Rahbar~\cite{rahbar_frozen_2026} probes three SwinUNETR encoders
 (brain-pretrained, CT-pretrained and untrained) on the multi-site ABIDE
 cohorts. Site is decodable at a similar level from all three and from the raw
-image, pretraining shows no reliable advantage for any clinical target, and
-removing the site directions with INLP or ComBat gives no significant gain on
-held-out sites while damaging segmentation, because the directions that carry
-site also carry anatomy. Similar negative controls show that EEG foundation
+image, and pretraining shows no reliable advantage for any clinical target.
+Removing the site directions with INLP or ComBat gives no significant gain on
+held-out sites, which Rahbar attributes to the averaged encoder output carrying little
+clinical information to begin with, and it damages segmentation, because the
+directions that carry site also carry anatomy. Similar negative controls show that EEG foundation
 models decode dataset identity perfectly~\cite{zare_negative-control_2026},
 and fMRI foundation-model embeddings are dominated by batch
 effects~\cite{tao_batch_2026}. Our work differs in four ways: the domains are
 17 independent public datasets rather than sites of one study; the outcome is
-the transfer of a shared content label; the representations include broadly
-pretrained foundation models, for which we do find a pretraining advantage;
-and we measure why transfer and removal fail.
+the transfer of a content label that every representation encodes well within
+each dataset; the representations include broadly pretrained foundation
+models, for which we do find a pretraining advantage; and we measure why
+transfer and removal fail.
+
+\paragraph{Cross-dataset failure of frozen medical foundation models.}
+Outside brain MRI, several studies show that frozen foundation-model features
+fail across datasets or centres. Germani et
+al.~\cite{germani_multi-institutional_2026} use frozen encoders on ten
+mammography datasets and find that classifiers trained on the aggregated data
+show dataset-dependent failure modes, with disparities in error, confidence
+and calibration, and they propose representation-level diagnostics of
+shortcut risk and evaluate mitigation strategies. Nguyen et
+al.~\cite{nguyen_benchmarking_2026} probe 15 frozen backbones trained on three
+mammography datasets and tested on twelve others: mammography-specific
+pretraining does not guarantee robustness, a general-purpose vision model
+remains competitive, and the better representations keep clinical signal while
+still reflecting dataset and acquisition structure. In pathology, all ten
+foundation models tested by de Jong et al.~\cite{de_jong_current_2025}
+represent the medical centre strongly, and errors follow same-centre
+confounders; PathoROB~\cite{komen_towards_2025} extends this to 20 models and
+34 centres, and image-level processing does not remove the hospital
+signatures~\cite{komen_histopathological_2024}. These studies establish that
+the failure occurs. Our aim is to explain it in brain MRI, by measuring whether the directions that separate a content label
+agree across datasets, by separating a shift of each dataset from a
+disagreement of directions, and by showing why removing the dataset signal
+cannot repair the second.
 
 \paragraph{Robustness of brain MRI foundation models.}
 Recent 3D foundation models include brain-specific models such as
@@ -292,8 +326,9 @@ MONAI~\cite{cardoso_monai_2022}; two brain-specific foundation models; and
 two broadly pretrained medical foundation models. The Handcrafted
 representation is a 26-element vector of intensity percentiles and moments,
 entropy, gradient and sharpness measures, and the original voxel geometry.
-Feature extraction for BrainIAC, BrainFM and 3DINO follows Mielcarz et
-al.~\cite{mielcarz_3d_2026}; for SAM-Med3D, the image-encoder output is
+The feature choice (class token or pooled map) and intensity scaling for
+BrainIAC, BrainFM and 3DINO follow Mielcarz et al.~\cite{mielcarz_3d_2026},
+within the shared geometry described below; for SAM-Med3D, the image-encoder output is
 mean-pooled.
 
 Three control representations aid interpretation: the ViT-L of 3DINO with
@@ -905,7 +940,9 @@ architecture, input scaling, skull stripping or data overlap. A plausible
 reading is that exposure to many scanners and protocols forces contrast to be
 encoded in shared terms, whereas a narrower brain-only corpus does not,
 although with two models per group this remains a hypothesis. It is
-consistent with the robustness of 3DINO to simulated
+consistent with the finding in mammography that domain-specific pretraining
+does not guarantee robustness to dataset shift~\cite{nguyen_benchmarking_2026},
+with the robustness of 3DINO to simulated
 artifacts~\cite{mielcarz_3d_2026} and with the poor cross-scanner reliability
 of BrainIAC~\cite{navarro-gonzalez_cross-scanner_2026}, and it shows that the
 absence of a pretraining advantage reported for SwinUNETR
@@ -918,12 +955,14 @@ property: only SAM-Med3D was slightly ahead.
 \paragraph{Post-hoc correction cannot substitute for better features.}
 In the representations tested, the dataset and the sequence share feature
 directions, so erasing or aligning the dataset signal also removes the
-content it is meant to protect. This matches the observation that removing a
-site subspace brings no gain on held-out sites and can harm
-segmentation~\cite{rahbar_frozen_2026}, and our consistency analysis
-explains it: the problem is the disagreement of the content directions
-themselves, which no removal or alignment of the dataset signal can rotate
-into agreement. Where the failure is partly a shift, as for sex in the
+content it is meant to protect. This agrees with the observation that removing
+a site subspace can harm segmentation because site and anatomy share
+directions~\cite{rahbar_frozen_2026}. Rahbar found no gain on held-out sites
+where the clinical targets were weakly encoded to begin with; here the
+sequence is strongly encoded within every dataset, and removal still does not
+help. Our consistency analysis explains this second case: the problem is the
+disagreement of the content directions themselves, which no removal or
+alignment of the dataset signal can rotate into agreement. Where the failure is partly a shift, as for sex in the
 Handcrafted statistics, alignment does help, so the outcome of removal
 depends on the label and can be anticipated with the centring test.
 Correction has succeeded where \emph{paired} scans of the same subjects under
@@ -970,6 +1009,16 @@ For anyone pooling public data, consistency across datasets should be treated
 as a property of how features are learned and verified on held-out datasets,
 not something to be corrected afterwards.
 
+
+\section*{Code and Data Availability}
+
+Code, the list of sampled scans and the result tables are available at
+\url{https://github.com/BrainFM/brainfm-profiler}. All 17 datasets are public
+and can be obtained from their original sources under their own licences.
+Because several of these licences do not permit redistribution of the data
+or of material derived from it, we do not redistribute the images or the
+extracted embeddings; the embeddings can be regenerated with the released
+code from the listed scans.
 
 \bibliographystyle{unsrtnat}
 \bibliography{references}

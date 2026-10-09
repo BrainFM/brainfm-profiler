@@ -1,4 +1,4 @@
-\begin{thebibliography}{64}
+\begin{thebibliography}{69}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -105,6 +105,40 @@ Ye~Tao, Bradley~T. Baker, Yu~Wu, Anand~D. Sarwate, Sandeep Panta, Sergey Plis,
 \newblock URL \url{https://arxiv.org/abs/2604.14441}.
 \newblock arXiv:2604.14441 [eess.SP].
 
+\bibitem[Germani et~al.(2026)Germani, Zeineddine, Mourad, and
+  Albarqouni]{germani_multi-institutional_2026}
+Elodie Germani, Fatima Zeineddine, Charbel Mourad, and Shadi Albarqouni.
+\newblock When multi-institutional dataset aggregation masks shortcut-like
+  behavior in foundation models for medical imaging.
+\newblock \emph{Medical Image Analysis}, page 104258, 2026.
+\newblock \doi{10.1016/j.media.2026.104258}.
+
+\bibitem[Nguyen et~al.(2026)Nguyen, Mehta, Stanley, Xia, Nguyen, Pham, and
+  Glocker]{nguyen_benchmarking_2026}
+Giang Nguyen, Raghav Mehta, Emma A.~M. Stanley, Tian Xia, Thi~Hao Nguyen, Hieu
+  Pham, and Ben Glocker.
+\newblock Benchmarking the robustness of foundation models for mammography
+  under domain shift, 2026.
+\newblock URL \url{https://arxiv.org/abs/2607.10358}.
+\newblock arXiv:2607.10358 [cs.CV].
+
+\bibitem[de~Jong et~al.(2025)de~Jong, Marcus, and Teuwen]{de_jong_current_2025}
+Edwin~D. de~Jong, Eric Marcus, and Jonas Teuwen.
+\newblock Current pathology foundation models are unrobust to medical center
+  differences, 2025.
+\newblock URL \url{https://arxiv.org/abs/2501.18055}.
+\newblock arXiv:2501.18055 [cs.CV].
+
+\bibitem[K{\"o}men et~al.(2025)K{\"o}men, de~Jong, Hense, Marienwald, Dippel,
+  Naumann, Marcus, Ruff, Alber, Teuwen, Klauschen, and
+  M{\"u}ller]{komen_towards_2025}
+Jonah K{\"o}men, Edwin~D. de~Jong, Julius Hense, Hannah Marienwald, Jonas
+  Dippel, Philip Naumann, Eric Marcus, Lukas Ruff, Maximilian Alber, Jonas
+  Teuwen, Frederick Klauschen, and Klaus-Robert M{\"u}ller.
+\newblock Towards robust foundation models for digital pathology, 2025.
+\newblock URL \url{https://arxiv.org/abs/2507.17845}.
+\newblock arXiv:2507.17845 [cs.CV].
+
 \bibitem[Navarro-Gonz{\'a}lez et~al.(2026)Navarro-Gonz{\'a}lez,
   Aja-Fern{\'a}ndez, Planchuelo-G{\'o}mez, and
   de~Luis-Garc{\'i}a]{navarro-gonzalez_cross-scanner_2026}
@@ -161,6 +195,14 @@ Ameet Deshpande, Partha Talukdar, and Karthik Narasimhan.
   Chapter of the Association for Computational Linguistics: Human Language
   Technologies ({NAACL})}, pages 3610--3623, 2022.
 \newblock URL \url{https://aclanthology.org/2022.naacl-main.264}.
+
+\bibitem[K{\"o}men et~al.(2024)K{\"o}men, Marienwald, Dippel, and
+  Hense]{komen_histopathological_2024}
+Jonah K{\"o}men, Hannah Marienwald, Jonas Dippel, and Julius Hense.
+\newblock Do histopathological foundation models eliminate batch effects? {A}
+  comparative study, 2024.
+\newblock URL \url{https://arxiv.org/abs/2411.05489}.
+\newblock arXiv:2411.05489 [cs.CV]. AIM-FM Workshop at NeurIPS 2024.
 
 \bibitem[Xu et~al.(2025)Xu, Hosseini, Anderson, Rinaldi, Krishnan, Martel, and
   Goubran]{xu_generalizable_2025}

@@ -5,7 +5,7 @@ Code and results for profiling public brain MRI datasets for foundation model de
 This repository accompanies the paper
 **[A Structured Review and Quantitative Profiling of Public Brain MRI Datasets for Foundation Model Development](https://www.mdpi.com/2313-433X/11/12/454)**
 (*Journal of Imaging*, 2025, 11(12), 454).
-It also contains new experiments added after the paper was published: a cross-dataset benchmark of frozen representations from eight encoders, including brain-specific and general medical foundation models, on 17 public datasets (`representation_utility/`).
+It also contains new experiments added after the paper was published: a cross-dataset benchmark of frozen representations from eight encoders, including brain-specific and general medical foundation models, on 17 public datasets (`representation_utility/`). These experiments are described in the preprint **Dataset-Specific Directions Limit Transfer of Brain MRI Foundation Model Features** (arXiv link to be added).
 
 ## What is in this repository
 
@@ -81,10 +81,11 @@ The foundation model code is not included. Clone it into `representation_utility
 
 The datasets are not redistributed. Download them from their original sources, listed in the paper. The metadata CSVs in `characterization/metadata/` store absolute image paths from our machines. Set your own root in `characterization/collect_metadata.py`, or use `path_rewrite` in `representation_utility/configs/datasets.yaml`.
 
-## Frozen embeddings
+## Sampled scans and embeddings
 
-The extracted embeddings for all representations will be available for download here: **link TBA**.
-Place the files in `representation_utility/outputs/` to rerun the analyses without extracting features again.
+The 4,167 scans used in the benchmark are listed in `representation_utility/results/tables/sampled_scans.csv` (dataset, patient, image ID, sequence).
+
+The extracted embeddings are not redistributed, because several dataset licences do not permit sharing data derived from the scans. Regenerate them with step 2 below once you have downloaded the datasets.
 
 ## Reproducing the benchmark
 
@@ -94,7 +95,7 @@ Run from `representation_utility/` after `source configs/env.sh`:
 # 1. index of all volumes and the per-dataset sample
 python scripts/build_index.py
 
-# 2. features (skip if you downloaded the embeddings)
+# 2. features
 python scripts/features_r1.py                                       # handcrafted
 python scripts/extract_embeddings.py --model untrained              # also: medical, selfsup
 python scripts/extract_fm_embeddings.py --model 3dino               # also: brainiac, brainfm, sammed3d,
@@ -117,7 +118,12 @@ Result tables (CSV and LaTeX) are written to `representation_utility/results/tab
 
 ## Citation
 
-If you use this code or its findings, please cite:
+If you use the frozen-representation benchmark (`representation_utility/`), please cite the preprint (arXiv link to be added):
+
+> Luu, M.S.K.; Tuchinov, B.N.
+> Dataset-Specific Directions Limit Transfer of Brain MRI Foundation Model Features. Preprint, 2026.
+
+If you use the dataset review and profiling code, please cite:
 
 > Luu, M.S.K.; Benedichuk, M.V.; Roppert, E.I.; Kenzhin, R.M.; Tuchinov, B.N.
 > A Structured Review and Quantitative Profiling of Public Brain MRI Datasets for Foundation Model Development.
