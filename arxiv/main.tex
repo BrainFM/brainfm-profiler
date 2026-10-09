@@ -15,16 +15,18 @@
 \usepackage{xcolor}
 \usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
 \usepackage{url}
+\usepackage{authblk}
+\usepackage{orcidlink}
 
 \captionsetup{font=small,labelfont=bf}
 \newcommand{\tabnote}[1]{\par\vspace{0.5ex}{\footnotesize\raggedright #1\par}}
 
 \title{Dataset-Specific Directions Limit Transfer of Brain MRI Foundation Model Features}
 
-\author{
-  Minh Sao Khue Luu \qquad Bair N. Tuchinov\\[0.5ex]
-  Novosibirsk State University, Novosibirsk, Russia
-}
+\author[1]{Minh Sao Khue Luu\,\orcidlink{0000-0002-6766-4966}}
+\author[1]{Bair N. Tuchinov\,\orcidlink{0000-0002-8931-9848}}
+\affil[1]{The Artificial Intelligence Research Center of Novosibirsk State University, Novosibirsk 630090, Russia}
+\affil[ ]{\texttt{luumsk@gmail.com}}
 
 \date{}
 
@@ -55,7 +57,7 @@ which fail on this shift. Third, four methods for removing the dataset signal,
 each with a matched control, never improve sequence transfer, because dataset
 and sequence share directions; alignment helps only where a centring test
 shows that the failure is a shift. Code is available at
-\url{https://github.com/BrainFM/brainfm-profiler}.
+\url{https://github.com/BrainFM/brainfm-profiler/tree/main/representation_utility}.
 \end{abstract}
 
 \section{Introduction}
@@ -656,7 +658,7 @@ MedicalNet with percentile input remains below both broadly pretrained models
 half of the held-out datasets retain the skull: on the five skull-stripped
 multi-sequence datasets, where the input matches their pretraining, BrainIAC
 and BrainFM reach 0.55 and 0.64, against 0.81 for 3DINO and 0.75 for
-SAM-Med3D. Finally, the advantage is not an artefact of pretraining overlap.
+SAM-Med3D. Finally, the advantage is not an artifact of pretraining overlap.
 UPENN-GBM, OASIS-1 and OASIS-2 may be part of the pretraining data of 3DINO
 or SAM-Med3D; excluding UPENN-GBM, the only one of the three with more than
 one sequence, leaves both above the Untrained CNN ($+0.25$ and $+0.20$,
@@ -721,12 +723,13 @@ datasets but are small relative to the spread within each sequence.
 
 Neither centring test improves transfer (Figure~\ref{fig:consistency}b). No
 change is significant for any representation ($p\ge0.16$), most
-representations lose slightly, and label-free and class-balanced centring
+representations lose slightly, 3DINO gains 0.06 without reaching
+significance, and label-free and class-balanced centring
 agree to within 0.01 for every representation. Each dataset being displaced
 as a whole is therefore not the main cause of failure, and neither is the
 different mix of sequences in each dataset. What remains is a disagreement of
-directions, which no per-dataset translation can repair and which the next
-subsection shows that removal methods do not repair either.
+directions, which no per-dataset translation can repair and which, as
+Section~\ref{sec:removal} shows, removal methods do not repair either.
 
 \begin{figure}[t]
 \centering
@@ -1013,7 +1016,7 @@ not something to be corrected afterwards.
 \section*{Code and Data Availability}
 
 Code, the list of sampled scans and the result tables are available at
-\url{https://github.com/BrainFM/brainfm-profiler}. All 17 datasets are public
+\url{https://github.com/BrainFM/brainfm-profiler/tree/main/representation_utility}. All 17 datasets are public
 and can be obtained from their original sources under their own licences.
 Because several of these licences do not permit redistribution of the data
 or of material derived from it, we do not redistribute the images or the
@@ -1040,7 +1043,7 @@ dataset and 0.25 for the sequence. Adv.: adversarial.}
 \toprule
  & \multicolumn{2}{c}{\textbf{Before}} & \multicolumn{4}{c}{\textbf{Dataset after}} & \multicolumn{4}{c}{\textbf{Sequence after}} \\
 \cmidrule(lr){2-3}\cmidrule(lr){4-7}\cmidrule(lr){8-11}
-\textbf{Representation} & Data. & Seq. & INLP & LEACE & CORAL & Adv. & INLP & LEACE & CORAL & Adv. \\
+\textbf{Representation} & Dataset & Seq. & INLP & LEACE & CORAL & Adv. & INLP & LEACE & CORAL & Adv. \\
 \midrule
 Handcrafted   & 0.92 & 0.73 & 0.88 & 0.84 & 0.14 & 0.88 & 0.68 & 0.56 & 0.54 & 0.71 \\
 Untrained CNN & 0.94 & 0.88 & 0.89 & 0.26 & 0.11 & 0.90 & 0.83 & 0.71 & 0.62 & 0.78 \\

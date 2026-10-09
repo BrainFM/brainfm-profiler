@@ -20,28 +20,7 @@ It also contains new experiments added after the paper was published: a cross-da
 
 ## Frozen-representation benchmark
 
-The new experiments ask whether frozen features encode the MRI sequence in the same way across datasets, so that it transfers to a dataset not seen in training.
-
-**Data.** 17 public adult brain MRI datasets (tumor, multiple sclerosis, stroke, epilepsy, neurodegenerative, healthy). Up to about 300 volumes are sampled per dataset by patient, 4,167 volumes in total. The dataset list is in `representation_utility/configs/datasets.yaml`.
-
-**Representations.** Eight frozen encoders, none fine-tuned:
-
-| Group | Representations |
-|---|---|
-| Baselines | Handcrafted image statistics, untrained 3D DenseNet-121, MedicalNet (ResNet-34), SwinUNETR (self-supervised on CT) |
-| Brain-specific foundation models | BrainIAC, BrainFM |
-| Broadly pretrained medical foundation models | 3DINO, SAM-Med3D |
-
-Three controls are also included: 3DINO with random weights, 3DINO with z-score input, and MedicalNet with percentile input.
-
-**Protocol.** All volumes are reoriented to RAS, resampled to 2 mm and cropped or padded to 128³. Each encoder then gets its own input size and intensity scaling. Linear probes on the features predict the source dataset and the sequence (T1, T1c, T2, FLAIR), with patient-level splits. Transfer is measured by leave-one-dataset-out: train on 16 datasets and test on the held-out one, scored by balanced accuracy.
-
-**Main findings.**
-
-- Every representation identifies the source dataset well (balanced accuracy 0.84–0.95, chance 0.06), including the untrained network and the handcrafted statistics.
-- Within a single dataset, every representation recognizes the sequence (0.84–0.97). On an unseen dataset, most fall to 0.44–0.55, including both brain-specific foundation models.
-- 3DINO (0.72) and SAM-Med3D (0.69) transfer best. Controls show that this comes from pretraining, not from the architecture, input scaling, skull stripping, or pretraining-data overlap.
-- Removing the dataset signal (INLP, LEACE, CORAL, adversarial) inside each training split does not improve transfer for any representation, because dataset and sequence share the same feature directions.
+The benchmark of frozen representations on 17 public datasets has its own README with findings, installation, reproduction steps and citation: **[representation_utility/README.md](representation_utility/README.md)**.
 
 ## Installation
 
@@ -60,68 +39,11 @@ pip install -r requirements.txt
 
 `preprocessing/` also needs [FSL](https://fsl.fmrib.ox.ac.uk/fsl/) for skull stripping.
 
-For the frozen-representation benchmark:
-
-```bash
-cd representation_utility
-python -m venv .venv
-source configs/env.sh              # activates .venv, keeps model caches in weights/
-pip install -r requirements.txt
-cp .env.example .env               # optional: add a Hugging Face token
-```
-
-The foundation model code is not included. Clone it into `representation_utility/external/` and put the checkpoints in `representation_utility/weights/` (paths are listed in `scripts/extract_fm_embeddings.py`):
-
-- [BrainIAC](https://github.com/AIM-KannLab/BrainIAC)
-- [BrainFM](https://github.com/jhuldr/BrainFM)
-- [3DINO](https://github.com/AICONSlab/3DINO)
-- [SAM-Med3D](https://github.com/uni-medical/SAM-Med3D)
-
 ## Data
 
 The datasets are not redistributed. Download them from their original sources, listed in the paper. The metadata CSVs in `characterization/metadata/` store absolute image paths from our machines. Set your own root in `characterization/collect_metadata.py`, or use `path_rewrite` in `representation_utility/configs/datasets.yaml`.
 
-## Sampled scans and embeddings
-
-The 4,167 scans used in the benchmark are listed in `representation_utility/results/tables/sampled_scans.csv` (dataset, patient, image ID, sequence).
-
-The extracted embeddings are not redistributed, because several dataset licences do not permit sharing data derived from the scans. Regenerate them with step 2 below once you have downloaded the datasets.
-
-## Reproducing the benchmark
-
-Run from `representation_utility/` after `source configs/env.sh`:
-
-```bash
-# 1. index of all volumes and the per-dataset sample
-python scripts/build_index.py
-
-# 2. features
-python scripts/features_r1.py                                       # handcrafted
-python scripts/extract_embeddings.py --model untrained              # also: medical, selfsup
-python scripts/extract_fm_embeddings.py --model 3dino               # also: brainiac, brainfm, sammed3d,
-                                                                    #       3dino_rand, 3dino_z, medical_pct
-python scripts/qc_factors.py                                        # per-scan acquisition factors
-python scripts/content_labels.py                                    # age and sex, where available
-
-# 3. analyses
-python scripts/benchmark_fm.py                # decodability, leave-one-dataset-out transfer, retrieval
-python scripts/within_dataset_fm.py           # sequence decodability within each dataset
-python scripts/lodo_age_sex.py                # sex and age transfer
-python scripts/removal_lodo.py --reps 3dino   # dataset-signal removal, one run per representation,
-python scripts/removal_lodo.py --merge        #   then merge
-
-# 4. figures
-python scripts/fig_chapter2.py
-```
-
-Result tables (CSV and LaTeX) are written to `representation_utility/results/tables/` and figures to `representation_utility/results/figures/`. The committed tables are the ones behind the reported numbers.
-
 ## Citation
-
-If you use the frozen-representation benchmark (`representation_utility/`), please cite the preprint (arXiv link to be added):
-
-> Luu, M.S.K.; Tuchinov, B.N.
-> Dataset-Specific Directions Limit Transfer of Brain MRI Foundation Model Features. Preprint, 2026.
 
 If you use the dataset review and profiling code, please cite:
 
@@ -144,7 +66,7 @@ If you use the dataset review and profiling code, please cite:
 }
 ```
 
-Citation metadata is also in [CITATION.cff](CITATION.cff).
+Citation metadata is also in [CITATION.cff](CITATION.cff). For the frozen-representation benchmark, cite the preprint listed in [representation_utility/README.md](representation_utility/README.md#citation).
 
 ## License
 

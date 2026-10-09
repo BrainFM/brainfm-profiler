@@ -544,9 +544,10 @@ Randy~L. Buckner, Joshua~L. Roffman, Jordan~W. Smoller, and {Neuroinformatics
 \newblock URL
   \url{https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/25833}.
 
-\bibitem[noa()]{noauthor_ixi_nodate}
-{IXI} {Dataset}.
+\bibitem[noa(n.d.)]{noauthor_ixi_nodate}
+{IXI} {Dataset}, n.d.
 \newblock URL \url{https://brain-development.org/ixi-dataset/}.
+\newblock Accessed 2025.
 
 \bibitem[Puccio et~al.(2016)Puccio, Pooley, Pellman, Taverna, and
   Craddock]{puccio_preprocessed_2016}

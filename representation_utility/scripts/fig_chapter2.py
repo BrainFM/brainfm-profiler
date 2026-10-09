@@ -92,9 +92,10 @@ def main():
                       ("ch2_identify_vs_transfer", fig_identify_vs_transfer(pm))):
         save_fig(fig, name)
         plt.close(fig)
-        DISS_FIG.mkdir(parents=True, exist_ok=True)
-        shutil.copy(FIGURES / f"{name}.pdf", DISS_FIG / f"{name}.pdf")
-        print(f"copied {name}.pdf -> {DISS_FIG}")
+        if DISS_FIG.parent.exists():
+            DISS_FIG.mkdir(exist_ok=True)
+            shutil.copy(FIGURES / f"{name}.pdf", DISS_FIG / f"{name}.pdf")
+            print(f"copied {name}.pdf -> {DISS_FIG}")
 
 
 if __name__ == "__main__":
